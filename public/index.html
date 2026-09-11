@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Оценка учителей — набросок</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{height:68px;background:#fff;border-bottom:1px solid #e7eaf0;display:flex;align-items:center;padding:0 7%;justify-content:space-between}
+.logo{font-weight:800;font-size:21px;color:#4f46e5}.nav{display:flex;gap:24px;color:#687186;font-size:14px}.nav a{color:inherit;text-decoration:none}.profile{background:#eef0ff;padding:9px 14px;border-radius:12px;font-size:14px}
+main{max-width:1120px;margin:0 auto;padding:46px 24px}.hero{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:30px}.eyebrow{color:#6366f1;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em}.hero h1{font-size:40px;margin:8px 0}.hero p{color:#6b7280;margin:0;max-width:620px}.search{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:13px 16px;width:290px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:30px}.stat{background:#fff;border:1px solid #e8ebf0;border-radius:16px;padding:20px}.stat b{font-size:27px;display:block;margin-bottom:5px}.muted{color:#7a8496;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:#fff;border:1px solid #e8ebf0;border-radius:18px;padding:20px;transition:.15s}.card:hover{transform:translateY(-2px);box-shadow:0 8px 25px #17203312}.avatar{width:48px;height:48px;border-radius:14px;background:#e9e7ff;color:#4f46e5;display:flex;align-items:center;justify-content:center;font-weight:800}.top{display:flex;gap:13px;align-items:center}.name{font-weight:750}.subject{font-size:13px;color:#7a8496;margin-top:3px}.rating{display:flex;align-items:center;gap:9px;margin:19px 0 12px}.score{font-size:29px;font-weight:800}.stars{color:#f59e0b;letter-spacing:2px}.bar{height:7px;background:#edf0f5;border-radius:10px;overflow:hidden}.fill{height:100%;background:#6366f1;border-radius:10px}.reviews{display:flex;justify-content:space-between;margin-top:12px}.button{display:block;text-align:center;text-decoration:none;color:#fff;background:#4f46e5;border-radius:11px;padding:11px;margin-top:17px;font-size:14px;font-weight:650}
+footer{padding:35px 24px;text-align:center;color:#8a93a3;font-size:12px}
+@media(max-width:800px){.hero{display:block}.search{width:100%;margin-top:20px}.grid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.nav{display:none}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Учитель+</div>
+  <nav class="nav"><a href="#">Главная</a><a href="#">Учителя</a><a href="#">Моя школа</a></nav>
+  <div class="profile">Ученик · 10А</div>
+</header>
+<main>
+  <section class="hero">
+    <div><div class="eyebrow">Электронный рейтинг</div><h1>Оценка учителей</h1><p>Смотри оценки учеников, находи лучших преподавателей и оставляй свою честную оценку.</p></div>
+    <input class="search" placeholder="🔎  Найти учителя или предмет">
+  </section>
+  <section class="stats">
+    <div class="stat"><b>4.7 / 5</b><span class="muted">Средняя оценка по школе</span></div>
+    <div class="stat"><b>38</b><span class="muted">Учителей в рейтинге</span></div>
+    <div class="stat"><b>1 284</b><span class="muted">Оценок от учеников</span></div>
+  </section>
+  <h2>Рейтинг учителей</h2>
+  <section class="grid">
+    <article class="card"><div class="top"><div class="avatar">АК</div><div><div class="name">Анна Кузнецова</div><div class="subject">Математика</div></div></div><div class="rating"><span class="score">4.9</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:98%"></div></div><div class="reviews"><span class="muted">126 оценок</span><span class="muted">№1</span></div><a class="button" href="#">Открыть профиль</a></article>
+    <article class="card"><div class="top"><div class="avatar">ДС</div><div><div class="name">Дмитрий Смирнов</div><div class="subject">Информатика</div></div></div><div class="rating"><span class="score">4.8</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:96%"></div></div><div class="reviews"><span class="muted">98 оценок</span><span class="muted">№2</span></div><a class="button" href="#">Открыть профиль</a></article>
+    <article class="card"><div class="top"><div class="avatar">ЕП</div><div><div class="name">Елена Петрова</div><div class="subject">Русский язык</div></div></div><div class="rating"><span class="score">4.7</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:94%"></div></div><div class="reviews"><span class="muted">143 оценки</span><span class="muted">№3</span></div><a class="button" href="#">Открыть профиль</a></article>
+    <article class="card"><div class="top"><div class="avatar">МИ</div><div><div class="name">Максим Иванов</div><div class="subject">Физика</div></div></div><div class="rating"><span class="score">4.6</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:92%"></div></div><div class="reviews"><span class="muted">87 оценок</span><span class="muted">№4</span></div><a class="button" href="#">Открыть профиль</a></article>
+    <article class="card"><div class="top"><div class="avatar">ОВ</div><div><div class="name">Ольга Волкова</div><div class="subject">История</div></div></div><div class="rating"><span class="score">4.5</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:90%"></div></div><div class="reviews"><span class="muted">76 оценок</span><span class="muted">№5</span></div><a class="button" href="#">Открыть профиль</a></article>
+    <article class="card"><div class="top"><div class="avatar">СН</div><div><div class="name">Сергей Никитин</div><div class="subject">Английский язык</div></div></div><div class="rating"><span class="score">4.4</span><span class="stars">★★★★★</span></div><div class="bar"><div class="fill" style="width:88%"></div></div><div class="reviews"><span class="muted">112 оценок</span><span class="muted">№6</span></div><a class="button" href="#">Открыть профиль</a></article>
+  </section>
+</main>
+<footer>Учитель+ · концепт интерфейса · данные демонстрационные</footer>
+</body>
+</html>
