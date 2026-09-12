@@ -1,1 +1,8 @@
-{"name":"teacher-rating-v4","version":"4.0.0","private":true,"scripts":{"dev":"vercel dev"}}
+{
+  "name": "teacher-rating-v5",
+  "version": "5.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  }
+}
