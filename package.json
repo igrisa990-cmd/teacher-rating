@@ -1,1 +1,11 @@
-{"name":"teacher-rating","version":"1.0.0","private":true,"scripts":{"dev":"vercel dev"}}
+{
+  "name": "teacher-rating-v3",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
