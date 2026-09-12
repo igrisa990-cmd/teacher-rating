@@ -1,58 +1,126 @@
--- Учитель+: база данных
-create table if not exists public.teachers (
-  id uuid primary key default gen_random_uuid(),
-  name text not null,
-  subject text not null,
-  category text not null default 'all',
+-- ==========================================
+-- TEACHERS TABLE
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS public.teachers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  subject text NOT NULL,
+  category text NOT NULL DEFAULT 'all',
   initials text,
-  rating numeric(2,1) not null default 0,
-  review_count integer not null default 0,
-  created_at timestamptz not null default now()
+  bio text,
+  rating numeric(2,1) NOT NULL DEFAULT 0,
+  review_count integer NOT NULL DEFAULT 0,
+  recommend_percent integer NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
 );
 
-create table if not exists public.reviews (
-  id uuid primary key default gen_random_uuid(),
-  teacher_id uuid not null references public.teachers(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  rating integer not null check (rating between 1 and 5),
-  comment text,
-  created_at timestamptz not null default now(),
-  unique(teacher_id,user_id)
+
+-- ==========================================
+-- ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ КОЛОНКИ
+-- ==========================================
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS name text;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS subject text;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS category text DEFAULT 'all';
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS initials text;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS bio text;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS rating numeric(2,1) DEFAULT 0;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS review_count integer DEFAULT 0;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS recommend_percent integer DEFAULT 0;
+
+ALTER TABLE public.teachers
+ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
+
+
+-- ==========================================
+-- ДОБАВЛЯЕМ УЧИТЕЛЕЙ
+-- ==========================================
+
+INSERT INTO public.teachers
+(name, subject, category, initials, bio)
+SELECT
+  v.name,
+  v.subject,
+  v.category,
+  v.initials,
+  v.bio
+FROM (
+  VALUES
+    (
+      'Анна Кузнецова',
+      'Математика',
+      'math',
+      'АК',
+      'Объясняет сложные темы простым языком и помогает уверенно готовиться к контрольным.'
+    ),
+    (
+      'Дмитрий Смирнов',
+      'Информатика',
+      'science',
+      'ДС',
+      'Практика, проекты и современные задачи. Делает акцент на понимании, а не на зубрёжке.'
+    ),
+    (
+      'Елена Петрова',
+      'Русский язык',
+      'languages',
+      'ЕП',
+      'Требовательная и внимательная. Помогает прокачать письменную речь и подготовиться к экзаменам.'
+    ),
+    (
+      'Максим Иванов',
+      'Физика',
+      'science',
+      'МИ',
+      'Эксперименты, наглядные примеры и разбор реальных задач.'
+    ),
+    (
+      'Ольга Волкова',
+      'История',
+      'humanities',
+      'ОВ',
+      'Дискуссии, кейсы и живые исторические сюжеты вместо сухого пересказа.'
+    ),
+    (
+      'Сергей Никитин',
+      'Английский язык',
+      'languages',
+      'СН',
+      'Много разговорной практики, понятная грамматика и полезные материалы.'
+    )
+) AS v(name, subject, category, initials, bio)
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.teachers t
+  WHERE t.name = v.name
 );
 
-alter table public.teachers enable row level security;
-alter table public.reviews enable row level security;
 
-create policy "teachers_read" on public.teachers for select using (true);
-create policy "reviews_read" on public.reviews for select using (true);
-create policy "reviews_insert_own" on public.reviews for insert with check (auth.uid() = user_id);
-create policy "reviews_update_own" on public.reviews for update using (auth.uid() = user_id);
-create policy "reviews_delete_own" on public.reviews for delete using (auth.uid() = user_id);
+-- ==========================================
+-- RLS
+-- ==========================================
 
-create or replace function public.refresh_teacher_rating()
-returns trigger language plpgsql security definer as $$
-declare tid uuid;
-begin
-  tid := coalesce(new.teacher_id, old.teacher_id);
-  update public.teachers t set
-    rating = coalesce((select round(avg(r.rating)::numeric,1) from public.reviews r where r.teacher_id=tid),0),
-    review_count = (select count(*) from public.reviews r where r.teacher_id=tid)
-  where t.id=tid;
-  return coalesce(new,old);
-end $$;
+ALTER TABLE public.teachers ENABLE ROW LEVEL SECURITY;
 
-drop trigger if exists reviews_refresh_rating on public.reviews;
-create trigger reviews_refresh_rating
-after insert or update or delete on public.reviews
-for each row execute function public.refresh_teacher_rating();
+DROP POLICY IF EXISTS teachers_read ON public.teachers;
 
-insert into public.teachers(name,subject,category,initials)
-select * from (values
-('Анна Кузнецова','Математика','math','АК'),
-('Дмитрий Смирнов','Информатика','science','ДС'),
-('Елена Петрова','Русский язык','languages','ЕП'),
-('Максим Иванов','Физика','science','МИ'),
-('Ольга Волкова','История','humanities','ОВ'),
-('Сергей Никитин','Английский язык','languages','СН')
-) v(name,subject,category,initials)
-where not exists (select 1 from public.teachers);
+CREATE POLICY teachers_read
+ON public.teachers
+FOR SELECT
+USING (true);
