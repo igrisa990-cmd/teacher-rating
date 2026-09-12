@@ -1,126 +1,17 @@
--- ==========================================
--- TEACHERS TABLE
--- ==========================================
-
-CREATE TABLE IF NOT EXISTS public.teachers (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  subject text NOT NULL,
-  category text NOT NULL DEFAULT 'all',
-  initials text,
-  bio text,
-  rating numeric(2,1) NOT NULL DEFAULT 0,
-  review_count integer NOT NULL DEFAULT 0,
-  recommend_percent integer NOT NULL DEFAULT 0,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-
-
--- ==========================================
--- ДОБАВЛЯЕМ НЕДОСТАЮЩИЕ КОЛОНКИ
--- ==========================================
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS name text;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS subject text;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS category text DEFAULT 'all';
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS initials text;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS bio text;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS rating numeric(2,1) DEFAULT 0;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS review_count integer DEFAULT 0;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS recommend_percent integer DEFAULT 0;
-
-ALTER TABLE public.teachers
-ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now();
-
-
--- ==========================================
--- ДОБАВЛЯЕМ УЧИТЕЛЕЙ
--- ==========================================
-
-INSERT INTO public.teachers
-(name, subject, category, initials, bio)
-SELECT
-  v.name,
-  v.subject,
-  v.category,
-  v.initials,
-  v.bio
-FROM (
-  VALUES
-    (
-      'Анна Кузнецова',
-      'Математика',
-      'math',
-      'АК',
-      'Объясняет сложные темы простым языком и помогает уверенно готовиться к контрольным.'
-    ),
-    (
-      'Дмитрий Смирнов',
-      'Информатика',
-      'science',
-      'ДС',
-      'Практика, проекты и современные задачи. Делает акцент на понимании, а не на зубрёжке.'
-    ),
-    (
-      'Елена Петрова',
-      'Русский язык',
-      'languages',
-      'ЕП',
-      'Требовательная и внимательная. Помогает прокачать письменную речь и подготовиться к экзаменам.'
-    ),
-    (
-      'Максим Иванов',
-      'Физика',
-      'science',
-      'МИ',
-      'Эксперименты, наглядные примеры и разбор реальных задач.'
-    ),
-    (
-      'Ольга Волкова',
-      'История',
-      'humanities',
-      'ОВ',
-      'Дискуссии, кейсы и живые исторические сюжеты вместо сухого пересказа.'
-    ),
-    (
-      'Сергей Никитин',
-      'Английский язык',
-      'languages',
-      'СН',
-      'Много разговорной практики, понятная грамматика и полезные материалы.'
-    )
-) AS v(name, subject, category, initials, bio)
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM public.teachers t
-  WHERE t.name = v.name
-);
-
-
--- ==========================================
--- RLS
--- ==========================================
-
-ALTER TABLE public.teachers ENABLE ROW LEVEL SECURITY;
-
-DROP POLICY IF EXISTS teachers_read ON public.teachers;
-
-CREATE POLICY teachers_read
-ON public.teachers
-FOR SELECT
-USING (true);
+create extension if not exists pgcrypto;
+create table if not exists public.schools(id uuid primary key default gen_random_uuid(),name text not null,city text,address text,created_at timestamptz default now());
+create table if not exists public.profiles(id uuid primary key references auth.users(id) on delete cascade,name text not null default 'Ученик',role text not null default 'student' check(role in('student','teacher','admin')),class_name text,school_id uuid references public.schools(id) on delete set null,created_at timestamptz default now());
+create table if not exists public.teachers(id uuid primary key default gen_random_uuid(),school_id uuid references public.schools(id) on delete set null,name text not null,subject text not null,category text not null default 'all',initials text,bio text,rating numeric(2,1) default 0,review_count int default 0,recommend_percent int default 0,created_at timestamptz default now());
+create table if not exists public.reviews(id uuid primary key default gen_random_uuid(),teacher_id uuid not null references public.teachers(id) on delete cascade,user_id uuid not null references auth.users(id) on delete cascade,rating int not null check(rating between 1 and 5),explanation int not null check(explanation between 1 and 5),fairness int not null check(fairness between 1 and 5),atmosphere int not null check(atmosphere between 1 and 5),comment text,created_at timestamptz default now(),unique(teacher_id,user_id));
+alter table public.teachers add column if not exists school_id uuid references public.schools(id) on delete set null;
+alter table public.profiles enable row level security;alter table public.schools enable row level security;alter table public.teachers enable row level security;alter table public.reviews enable row level security;
+drop policy if exists schools_read on public.schools;create policy schools_read on public.schools for select using(true);
+drop policy if exists profiles_read_own on public.profiles;create policy profiles_read_own on public.profiles for select using(auth.uid()=id);drop policy if exists profiles_insert_own on public.profiles;create policy profiles_insert_own on public.profiles for insert with check(auth.uid()=id);drop policy if exists profiles_update_own on public.profiles;create policy profiles_update_own on public.profiles for update using(auth.uid()=id);
+drop policy if exists teachers_read on public.teachers;create policy teachers_read on public.teachers for select using(true);
+drop policy if exists reviews_read on public.reviews;create policy reviews_read on public.reviews for select using(true);drop policy if exists reviews_insert_own on public.reviews;create policy reviews_insert_own on public.reviews for insert with check(auth.uid()=user_id);
+create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$ begin insert into public.profiles(id,name,class_name,school_id) values(new.id,coalesce(new.raw_user_meta_data->>'name','Ученик'),new.raw_user_meta_data->>'class_name',nullif(new.raw_user_meta_data->>'school_id','')::uuid) on conflict(id) do update set name=excluded.name,class_name=excluded.class_name,school_id=excluded.school_id;return new;end $$;
+drop trigger if exists on_auth_user_created on auth.users;create trigger on_auth_user_created after insert on auth.users for each row execute procedure public.handle_new_user();
+create or replace function public.refresh_teacher_rating() returns trigger language plpgsql security definer set search_path=public as $$ declare tid uuid;begin tid:=coalesce(new.teacher_id,old.teacher_id);update public.teachers t set rating=coalesce((select round(avg(r.rating)::numeric,1) from public.reviews r where r.teacher_id=tid),0),review_count=(select count(*) from public.reviews r where r.teacher_id=tid),recommend_percent=coalesce((select round(100*avg(case when r.rating>=4 then 1 else 0 end))::int from public.reviews r where r.teacher_id=tid),0) where t.id=tid;return coalesce(new,old);end $$;
+drop trigger if exists reviews_refresh_rating on public.reviews;create trigger reviews_refresh_rating after insert or update or delete on public.reviews for each row execute function public.refresh_teacher_rating();
+insert into public.schools(name,city,address) select * from (values('Лицей №1','Рига','ул. Центральная, 1'),('Гимназия «Новая волна»','Рига','ул. Школьная, 12'),('Школа №8','Юрмала','ул. Морская, 8')) v(name,city,address) where not exists(select 1 from public.schools);
+with s as(select id,name from public.schools) insert into public.teachers(name,subject,category,initials,bio,school_id) select x.name,x.subject,x.category,x.initials,x.bio,(select id from s where name=x.school) from (values('Анна Кузнецова','Математика','math','АК','Просто объясняет сложные темы.','Лицей №1'),('Дмитрий Смирнов','Информатика','science','ДС','Практика и современные задачи.','Лицей №1'),('Елена Петрова','Русский язык','languages','ЕП','Требовательная и внимательная.','Гимназия «Новая волна»'),('Максим Иванов','Физика','science','МИ','Эксперименты и реальные задачи.','Гимназия «Новая волна»'),('Ольга Волкова','История','humanities','ОВ','Дискуссии и исторические кейсы.','Школа №8'),('Сергей Никитин','Английский язык','languages','СН','Разговорная практика.','Школа №8')) x(name,subject,category,initials,bio,school) where not exists(select 1 from public.teachers);
