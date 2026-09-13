@@ -1,0 +1,20 @@
+-- Учитель+ v6 database
+create extension if not exists pgcrypto;
+create table if not exists public.schools(id uuid primary key default gen_random_uuid(),name text not null,city text,address text,created_at timestamptz default now());
+create table if not exists public.teachers(id uuid primary key default gen_random_uuid(),school_id uuid references public.schools(id) on delete set null,name text not null,subject text not null,category text default 'all',initials text,bio text,rating numeric(2,1) default 0,review_count int default 0,recommend_percent int default 0,created_at timestamptz default now());
+create table if not exists public.profiles(id uuid primary key references auth.users(id) on delete cascade,name text default 'Ученик',class_name text,school_id uuid references public.schools(id) on delete set null,created_at timestamptz default now());
+create table if not exists public.reviews(id uuid primary key default gen_random_uuid(),teacher_id uuid not null references public.teachers(id) on delete cascade,user_id uuid not null references auth.users(id) on delete cascade,rating int not null check(rating between 1 and 5),explanation int not null check(explanation between 1 and 5),fairness int not null check(fairness between 1 and 5),atmosphere int not null check(atmosphere between 1 and 5),comment text,created_at timestamptz default now(),unique(teacher_id,user_id));
+create table if not exists public.favorites(user_id uuid references auth.users(id) on delete cascade,teacher_id uuid references public.teachers(id) on delete cascade,created_at timestamptz default now(),primary key(user_id,teacher_id));
+alter table public.schools enable row level security; alter table public.teachers enable row level security; alter table public.profiles enable row level security; alter table public.reviews enable row level security; alter table public.favorites enable row level security;
+drop policy if exists schools_public_read on public.schools; create policy schools_public_read on public.schools for select using(true);
+drop policy if exists teachers_public_read on public.teachers; create policy teachers_public_read on public.teachers for select using(true);
+drop policy if exists profiles_self on public.profiles; create policy profiles_self on public.profiles for all using(auth.uid()=id) with check(auth.uid()=id);
+drop policy if exists reviews_public_read on public.reviews; create policy reviews_public_read on public.reviews for select using(true);
+drop policy if exists reviews_self_insert on public.reviews; create policy reviews_self_insert on public.reviews for insert with check(auth.uid()=user_id);
+drop policy if exists favorites_self on public.favorites; create policy favorites_self on public.favorites for all using(auth.uid()=user_id) with check(auth.uid()=user_id);
+create or replace function public.new_profile() returns trigger language plpgsql security definer set search_path=public as $$ begin insert into public.profiles(id,name,class_name) values(new.id,coalesce(new.raw_user_meta_data->>'name','Ученик'),new.raw_user_meta_data->>'class_name') on conflict(id) do nothing; return new; end $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users for each row execute function public.new_profile();
+create or replace function public.update_teacher_rating() returns trigger language plpgsql security definer set search_path=public as $$ declare tid uuid; begin tid:=coalesce(new.teacher_id,old.teacher_id); update public.teachers set rating=coalesce((select round(avg(rating)::numeric,1) from public.reviews where teacher_id=tid),0),review_count=(select count(*) from public.reviews where teacher_id=tid),recommend_percent=coalesce((select round(100*avg(case when rating>=4 then 1 else 0 end))::int from public.reviews where teacher_id=tid),0) where id=tid; return coalesce(new,old); end $$;
+drop trigger if exists refresh_teacher_rating on public.reviews;
+create trigger refresh_teacher_rating after insert or update or delete on public.reviews for each row execute function public.update_teacher_rating();
