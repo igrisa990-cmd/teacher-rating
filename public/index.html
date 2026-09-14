@@ -42,24 +42,30 @@ function rate(name,id){if(!db){toast("База ещё подключается")
 function pick(n){picked=n;document.querySelectorAll(".pick button").forEach((b,i)=>b.classList.toggle("sel",i<n))}
 async function send(id){if(!db){toast("Supabase не подключён");return}if(!user){auth("login");return}if(!picked){toast("Сначала выбери оценку");return}const comment=document.getElementById("comment")?.value.trim()||"";const r=await db.from("reviews").insert({teacher_id:id,user_id:user.id,rating:picked,comment});if(r.error){console.error(r.error);toast(r.error.message||"Не удалось сохранить оценку");return}closeModal();toast("Оценка опубликована ⭐");await loadData();teacher(id)}
 async function loadData(){
- try{
-  if(!window.supabase)throw new Error("Supabase SDK не загрузился");
-  if(!C.supabaseUrl||!C.supabaseAnonKey)throw new Error("Не найден /runtime-config.js");
-  db=window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey);
-  const session=await db.auth.getSession(); user=session.data?.session?.user||null; account();
-  const [s,t]=await Promise.all([db.from("schools").select("*").order("name"),db.from("teachers").select("*").order("rating",{ascending:false})]);
-  if(s.error)console.warn("schools:",s.error);
-  if(t.error)console.warn("teachers:",t.error);
-  if(!s.error&&s.data?.length)schools=s.data;
-  if(!t.error&&t.data?.length)teachers=t.data;
-  document.getElementById("status").textContent=" · Supabase online";
-  renderHome();renderSchools();renderTeachers();
-  db.auth.onAuthStateChange((_e,session)=>{user=session?.user||null;account()});
- }catch(e){
-  console.error(e);document.getElementById("status").textContent=" · офлайн-режим";
-  account();renderHome();renderSchools();renderTeachers();
- }
+  try{
+    if(!window.supabase) throw new Error("Supabase SDK не загрузился");
+    const cfg=window.RUNTIME_CONFIG||{};
+    if(!cfg.supabaseUrl||!cfg.supabaseAnonKey) throw new Error("runtime-config.js не найден");
+    db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{db:{schema:"public"},auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    const session=await db.auth.getSession();
+    user=session.data?.session?.user||null;
+    account();
+    const schoolsResult=await db.from("schools").select("*").order("name");
+    const teachersResult=await db.from("teachers").select("*").order("rating",{ascending:false});
+    if(schoolsResult.error) console.error("schools",schoolsResult.error);
+    if(teachersResult.error) console.error("teachers",teachersResult.error);
+    if(!schoolsResult.error&&schoolsResult.data) schools=schoolsResult.data;
+    if(!teachersResult.error&&teachersResult.data) teachers=teachersResult.data;
+    document.getElementById("status").textContent=" · Supabase подключён";
+    renderHome();renderSchools();renderTeachers();
+    db.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;account()});
+  }catch(e){
+    console.error("Supabase:",e);
+    document.getElementById("status").textContent=" · ошибка Supabase";
+    account();renderHome();renderSchools();renderTeachers();
+  }
 }
+
 function search(){const q=document.getElementById("search").value.toLowerCase().trim(),box=document.getElementById("suggest");if(!q){box.classList.remove("show");return}const ss=schools.filter(s=>(s.name+" "+s.city+" "+(s.address||"")).toLowerCase().includes(q)).slice(0,5);const tt=teachers.filter(t=>(t.name+" "+t.subject).toLowerCase().includes(q)).slice(0,6);box.innerHTML=ss.map(s=>'<div class="suggestItem" onclick="school(\''+s.id+'\');hideSuggest()"><b>🏫 '+esc(s.name)+'</b><small>'+esc(s.city)+'</small></div>').join("")+tt.map(t=>'<div class="suggestItem" onclick="teacher(\''+t.id+'\');hideSuggest()"><b>👨‍🏫 '+esc(t.name)+'</b><small>'+esc(t.subject)+'</small></div>').join("");box.classList.toggle("show",!!box.innerHTML)}
 function hideSuggest(){document.getElementById("suggest").classList.remove("show")}
 function toast(t){const x=document.getElementById("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",2600)}
