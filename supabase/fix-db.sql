@@ -40,6 +40,7 @@ grant usage on schema public to anon, authenticated;
 grant select on public.schools to anon, authenticated;
 grant select on public.teachers to anon, authenticated;
 grant select on public.reviews to anon, authenticated;
+grant usage, select on all sequences in schema public to anon, authenticated;
 grant insert on public.reviews to authenticated;
 grant update on public.reviews to authenticated;
 grant delete on public.reviews to authenticated;
@@ -150,3 +151,11 @@ set rating = coalesce((select round(avg(r.rating)::numeric,1) from public.review
 select 'schools' as table_name, count(*) as rows from public.schools
 union all select 'teachers', count(*) from public.teachers
 union all select 'reviews', count(*) from public.reviews;
+
+
+-- Data API / PostgREST cache refresh.
+notify pgrst, 'reload schema';
+
+-- Diagnostics: these return counts and confirm the objects are queryable.
+select count(*) as schools_count from public.schools;
+select count(*) as teachers_count from public.teachers;
