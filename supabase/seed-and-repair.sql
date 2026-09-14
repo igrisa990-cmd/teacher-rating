@@ -101,3 +101,30 @@ for each row execute function public.refresh_teacher_rating();
 
 -- Если Supabase отключает подтверждение email, регистрация войдёт сразу.
 -- Если подтверждение включено, после регистрации пользователь должен подтвердить email.
+
+
+-- Profile table: имя и фамилия пользователя живут отдельно от auth.
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  first_name text not null default '',
+  last_name text not null default '',
+  created_at timestamptz not null default now()
+);
+alter table public.profiles enable row level security;
+drop policy if exists "profiles own read" on public.profiles;
+create policy "profiles own read" on public.profiles for select to authenticated using (auth.uid()=id);
+drop policy if exists "profiles own insert" on public.profiles;
+create policy "profiles own insert" on public.profiles for insert to authenticated with check (auth.uid()=id);
+drop policy if exists "profiles own update" on public.profiles;
+create policy "profiles own update" on public.profiles for update to authenticated using (auth.uid()=id);
+
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path=public as $$
+begin
+ insert into public.profiles(id,first_name,last_name)
+ values(new.id,coalesce(new.raw_user_meta_data->>'first_name',''),coalesce(new.raw_user_meta_data->>'last_name',''))
+ on conflict(id) do update set first_name=excluded.first_name,last_name=excluded.last_name;
+ return new;
+end $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
