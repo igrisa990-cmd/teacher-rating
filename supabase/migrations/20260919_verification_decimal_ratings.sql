@@ -18,6 +18,11 @@ alter table public.teacher_requests add constraint teacher_requests_rating_half_
 grant select (verification_status, verification_method, verification_confidence, verification_checked_at)
   on public.teacher_requests to anon, authenticated;
 
+-- В ранних версиях проекта этих трёх критериев могло ещё не быть.
+-- Сначала создаём их, затем одинаково переводим старые и новые базы на numeric(2,1).
+alter table public.reviews add column if not exists explanation numeric(2,1) default 5;
+alter table public.reviews add column if not exists fairness numeric(2,1) default 5;
+alter table public.reviews add column if not exists atmosphere numeric(2,1) default 5;
 alter table public.reviews drop constraint if exists reviews_rating_check;
 alter table public.reviews drop constraint if exists reviews_explanation_check;
 alter table public.reviews drop constraint if exists reviews_fairness_check;
