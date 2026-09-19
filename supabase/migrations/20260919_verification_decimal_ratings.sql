@@ -1,4 +1,4 @@
--- Учитель+ — автоматическая проверка учителей и расширенная оценка с шагом 0,5.
+-- Учитель+ — автоматическая проверка учителей и расширенная оценка с шагом 0,1.
 -- Применять после 20260918_russia_regions_and_requests.sql.
 
 alter table public.teachers add column if not exists verification_status text not null default 'pending';
@@ -12,9 +12,10 @@ alter table public.teacher_requests add column if not exists verification_confid
 alter table public.teacher_requests add column if not exists verification_checked_at timestamptz;
 alter table public.teacher_requests drop constraint if exists teacher_requests_rating_check;
 alter table public.teacher_requests drop constraint if exists teacher_requests_rating_half_step;
+alter table public.teacher_requests drop constraint if exists teacher_requests_rating_tenth_step;
 alter table public.teacher_requests alter column rating type numeric(2,1) using rating::numeric(2,1);
-alter table public.teacher_requests add constraint teacher_requests_rating_half_step
-  check (rating between 1 and 5 and mod(rating * 10, 5) = 0);
+alter table public.teacher_requests add constraint teacher_requests_rating_tenth_step
+  check (rating between 1 and 5 and mod(rating * 10, 1) = 0);
 grant select (verification_status, verification_method, verification_confidence, verification_checked_at)
   on public.teacher_requests to anon, authenticated;
 
@@ -42,21 +43,26 @@ alter table public.reviews drop constraint if exists reviews_explanation_half_st
 alter table public.reviews drop constraint if exists reviews_fairness_half_step;
 alter table public.reviews drop constraint if exists reviews_atmosphere_half_step;
 alter table public.reviews drop constraint if exists reviews_more_criteria_half_step;
-alter table public.reviews add constraint reviews_rating_half_step
-  check (rating between 1 and 5 and mod(rating * 10, 5) = 0);
-alter table public.reviews add constraint reviews_explanation_half_step
-  check (explanation between 1 and 5 and mod(explanation * 10, 5) = 0);
-alter table public.reviews add constraint reviews_fairness_half_step
-  check (fairness between 1 and 5 and mod(fairness * 10, 5) = 0);
-alter table public.reviews add constraint reviews_atmosphere_half_step
-  check (atmosphere between 1 and 5 and mod(atmosphere * 10, 5) = 0);
-alter table public.reviews add constraint reviews_more_criteria_half_step
+alter table public.reviews drop constraint if exists reviews_rating_tenth_step;
+alter table public.reviews drop constraint if exists reviews_explanation_tenth_step;
+alter table public.reviews drop constraint if exists reviews_fairness_tenth_step;
+alter table public.reviews drop constraint if exists reviews_atmosphere_tenth_step;
+alter table public.reviews drop constraint if exists reviews_more_criteria_tenth_step;
+alter table public.reviews add constraint reviews_rating_tenth_step
+  check (rating between 1 and 5 and mod(rating * 10, 1) = 0);
+alter table public.reviews add constraint reviews_explanation_tenth_step
+  check (explanation between 1 and 5 and mod(explanation * 10, 1) = 0);
+alter table public.reviews add constraint reviews_fairness_tenth_step
+  check (fairness between 1 and 5 and mod(fairness * 10, 1) = 0);
+alter table public.reviews add constraint reviews_atmosphere_tenth_step
+  check (atmosphere between 1 and 5 and mod(atmosphere * 10, 1) = 0);
+alter table public.reviews add constraint reviews_more_criteria_tenth_step
   check (
-    engagement between 1 and 5 and mod(engagement * 10, 5) = 0 and
-    respect between 1 and 5 and mod(respect * 10, 5) = 0 and
-    feedback between 1 and 5 and mod(feedback * 10, 5) = 0 and
-    workload between 1 and 5 and mod(workload * 10, 5) = 0 and
-    exam_prep between 1 and 5 and mod(exam_prep * 10, 5) = 0
+    engagement between 1 and 5 and mod(engagement * 10, 1) = 0 and
+    respect between 1 and 5 and mod(respect * 10, 1) = 0 and
+    feedback between 1 and 5 and mod(feedback * 10, 1) = 0 and
+    workload between 1 and 5 and mod(workload * 10, 1) = 0 and
+    exam_prep between 1 and 5 and mod(exam_prep * 10, 1) = 0
   );
 
 create table if not exists public.teacher_verification_checks (
