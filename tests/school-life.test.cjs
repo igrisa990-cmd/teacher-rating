@@ -1,0 +1,33 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const storage=new Map(),elements=new Map();
+function el(id){if(!elements.has(id))elements.set(id,{insertAdjacentHTML(){},innerHTML:'',textContent:'',value:'',classList:{contains:()=>false},scrollHeight:10,scrollTop:0,clientHeight:10});return elements.get(id)}
+const c={console,crypto:require('node:crypto').webcrypto,URL,Date,setInterval:()=>{},state:{loading:false,demoMode:true,user:{id:'u1'},schools:[{id:'s1',name:'Школа 1',region:'Москва',city:'Москва'},{id:'s2',name:'Школа 2',region:'Москва',city:'Москва'}]},home:()=>'<div class="focusLinks"><button>Чат региона</button></div>',render:()=>{},injectGuideBanner:()=>{},sendDirectorRating:async()=>{},openRegionOnboarding:()=>{},document:{querySelector:()=>null,querySelectorAll:()=>[],hidden:false},location:{hash:'#voting/s1'},history:{state:{},replaceState:(_,__,url)=>c.location.hash=url},currentRouteName:()=>c.location.hash.slice(1),localStorage:{setItem:(k,v)=>storage.set(k,v)},readLocalListV13:k=>JSON.parse(storage.get(k)||'[]'),$:el,esc:x=>String(x??'').replaceAll('<','&lt;'),preferredRegion:()=> 'Москва',searchRankV14:(values,q)=>values.some(v=>String(v).includes(q))?1:-1,empty:x=>`<p>${x}</p>`,backToPrevious:()=>{},openAuth:()=>{},openModal:()=>{},closeModal:()=>{},toast:()=>{},syncPageChrome:()=>{},setActive:()=>{},updateCompare:()=>{},applyMotionEffects:()=>{},go:route=>{c.location.hash='#'+route}};
+vm.createContext(c);vm.runInContext(fs.readFileSync('public/school-life.js','utf8'),c);
+const run=s=>vm.runInContext(s,c); const routeRender=c.render;c.render=()=>{};
+(async()=>{
+assert(!run('home()').includes('Чат региона'));
+for(const route of ['directors','atmosphere','voting'])assert(run('home()').includes(`go('${route}')`));
+assert.equal(run("lifeNormalizeClass(' 10 б ')"),'10Б');
+assert.equal(run("lifeVideoUrl('javascript:alert(1)')"),null);
+assert.equal(run("lifeVideoUrl('https://example.org/movie.mp4')"),'https://example.org/movie.mp4');
+assert.throws(()=>run("lifeParseOptions('Да\\nда')"));
+assert.throws(()=>run("lifeParseOptions('Один')"));
+assert.equal(run("lifeParseOptions('Да\\nНет').length"),2);
+el('#lifeClassName').value='8а';await run('lifeCreateClass()');
+let classes=JSON.parse(storage.get('schoolLife:school_classes'));assert.equal(classes[0].name,'8А');
+run("schoolLife.classes=lifeLocal('school_classes')");await run('lifeCreateClass()');assert.equal(JSON.parse(storage.get('schoolLife:school_classes')).length,1);
+el('#lifeOptions').value='Концерт\nКвест';el('#lifeQuestion').value='Какой праздник выбрать?';el('#lifeDeadline').value='7';el('#lifePollScope').value='all';
+await run('lifeCreatePoll()');
+run("schoolLife.polls=lifeLocal('school_polls');schoolLife.votes=[]");
+const poll=JSON.parse(storage.get('schoolLife:school_polls'))[0];assert.equal(poll.school_id,'s1');assert.equal(poll.class_id,null);
+await run(`lifeVote('${poll.id}',0)`);await run(`lifeVote('${poll.id}',1)`);
+let votes=JSON.parse(storage.get('schoolLife:school_poll_votes'));assert.equal(votes.length,1);assert.equal(votes[0].option_index,1);
+run("state.user={id:'u2'}");await run(`lifeVote('${poll.id}',0)`);assert.equal(JSON.parse(storage.get('schoolLife:school_poll_votes')).length,2);
+run("schoolLife.polls[0].ends_at=new Date(Date.now()-1000).toISOString()");await run(`lifeVote('${poll.id}',1)`);votes=JSON.parse(storage.get('schoolLife:school_poll_votes'));assert.equal(votes.find(v=>v.user_id==='u2').option_index,0);
+assert.equal((await run("lifeRead('school_polls','s2')")).length,0);
+c.location.hash='#atmosphere/s1/chat';el('#lifeMessage').value='Привет';await run('lifeSendMessage()');assert.equal(JSON.parse(storage.get('schoolLife:school_messages'))[0].body,'Привет');assert.equal((await run("lifeRead('school_messages','s2')")).length,0);
+c.location.hash='#chat';c.render=routeRender;run('render()');assert.equal(c.location.hash,'#directors');
+console.log('PASS: home navigation, class normalization/duplicates, polls, vote replacement, deadline, school isolation, chat, video URLs, legacy redirect');
+})().catch(e=>{console.error(e);process.exit(1)});
