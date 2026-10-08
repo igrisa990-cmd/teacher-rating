@@ -96,6 +96,7 @@
 <link rel="stylesheet" href="/social-ui.css">
 <link rel="stylesheet" href="/appearance.css">
 <link rel="stylesheet" href="/catalog-ui.css">
+<link rel="stylesheet" href="/design-polish.css">
 </head>
 <body>
   <header><div class="wrap topbarWrap"><nav class="topbar">
@@ -584,6 +585,7 @@ async function publishTeacherRatingSection(id,section){if(state.teacherRatingSav
 <script src="/social-ui.js"></script>
 <script src="/appearance.js"></script>
 <script src="/catalog-ui.js"></script>
+<script src="/design-motion.js"></script>
 <script>
 document.documentElement.dataset.theme=localStorage.getItem('theme')||'light';$('#themeBtn').textContent=document.documentElement.dataset.theme==='dark'?'☀':'☾';
 window.addEventListener('hashchange',render);window.addEventListener('popstate',render);document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideSuggest()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();($('#homeSearch')||$('#rateSearchInput')||$('#teacherHubSearch')||$('#teacherFilterInput')||$('#schoolFilterInput')||$('#globalSearch'))?.focus()}});document.addEventListener('click',e=>{if(!e.target.closest('.search')&&!e.target.closest('.heroSearch')&&!e.target.closest('.focusSearch')&&!e.target.closest('.unifiedSearch'))hideSuggest()});new MutationObserver(()=>requestAnimationFrame(injectGuideBanner)).observe($('#app'),{childList:true,subtree:false});loadData();
