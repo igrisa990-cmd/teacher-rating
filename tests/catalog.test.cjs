@@ -1,0 +1,10 @@
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm'),path=require('path');
+test('official verification requires full identity and subject in one row',async()=>{const src=fs.readFileSync(path.join(__dirname,'../supabase/functions/verify-catalog/match.js'),'utf8');const m=await import('data:text/javascript;base64,'+Buffer.from(src).toString('base64'));
+assert.equal(m.matchesOfficialRow('<tr><td>Иван Петров</td><td>Математика</td></tr>','Иван Петров','математика'),true);
+assert.equal(m.matchesOfficialRow('<tr>Иван Петров</tr><tr>Математика</tr>','Иван Петров','математика'),false);
+assert.equal(m.matchesOfficialRow('<tr>Иванов Петрович Математика</tr>','Иван Петров','математика'),false);
+assert.equal(m.matchesOfficialRow('<tr>Иван Петров <script>Математика</script></tr>','Иван Петров','математика'),false);
+for(const ip of ['127.0.0.1','10.0.0.1','169.254.169.254','::1','::ffff:127.0.0.1','fc00::1','100.64.0.1'])assert.equal(m.publicAddress(ip),false);
+assert.equal(m.publicAddress('8.8.8.8'),true);
+});
+test('12 unique themes have complete day/night palettes and validate saved settings',()=>{const src=fs.readFileSync(path.join(__dirname,'../public/appearance.js'),'utf8');const c={matchMedia:()=>({matches:false,addEventListener(){}}),socialRead:()=>({skin:'bad',mode:'bad'}),socialSave:()=>true,document:{documentElement:{dataset:{},style:{setProperty(){}}},querySelectorAll:()=>[]},localStorage:{setItem(){}},$:()=>null,openDockSettings(){}};vm.createContext(c);vm.runInContext(src,c);assert.equal(vm.runInContext('uiThemes.length',c),12);assert.equal(vm.runInContext('new Set(uiThemes.map(t=>t.id)).size',c),12);assert.equal(vm.runInContext('uiThemes.every(t=>t.light.length===10&&t.dark.length===10)',c),true);assert.equal(c.document.documentElement.dataset.skin,'original');assert.equal(c.document.documentElement.dataset.motion,'full')});

@@ -3,6 +3,8 @@
   "version": "5.0.0",
   "private": true,
   "scripts": {
-    "dev": "vercel dev"
+    "dev": "vercel dev",
+    "test": "node -e \"require('./tests/catalog.test.cjs');require('./tests/school-life.test.cjs');require('./tests/social-ui.test.cjs')\"",
+    "test:catalog-sql": "node tests/catalog-sql.cjs"
   }
 }
