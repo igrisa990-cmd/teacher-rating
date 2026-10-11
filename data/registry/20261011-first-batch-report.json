@@ -1,0 +1,110 @@
+{
+  "source": "https://islod.obrnadzor.gov.ru/rlic/",
+  "query": "общеобразовательн",
+  "status": "6",
+  "checkedAt": "2026-10-11T07:50:34.566Z",
+  "startPage": 1,
+  "lastPage": 10,
+  "nextPage": 11,
+  "eligible": 73,
+  "regions": [
+    "Астраханская область",
+    "Белгородская область",
+    "Брянская область",
+    "Волгоградская область",
+    "Вологодская область",
+    "Воронежская область",
+    "Еврейская автономная область",
+    "Забайкальский край",
+    "Иркутская область",
+    "Кабардино-Балкарская Республика",
+    "Краснодарский край",
+    "Красноярский край",
+    "Москва",
+    "Московская область",
+    "Нижегородская область",
+    "Омская область",
+    "Оренбургская область",
+    "Пензенская область",
+    "Приморский край",
+    "Псковская область",
+    "Республика Бурятия",
+    "Республика Дагестан",
+    "Республика Коми",
+    "Республика Татарстан",
+    "Республика Хакасия",
+    "Ростовская область",
+    "Самарская область",
+    "Санкт-Петербург",
+    "Саратовская область",
+    "Свердловская область",
+    "Смоленская область",
+    "Ставропольский край",
+    "Тверская область",
+    "Томская область",
+    "Удмуртская Республика",
+    "Ульяновская область",
+    "Хабаровский край",
+    "Челябинская область"
+  ],
+  "skipped": [
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/97345",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/42869",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/84160",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/187408",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/29547",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/143655",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/29547",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/251827",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/114121",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/159001",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/261027",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/158909",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/251827",
+      "reason": "Needs manual classification/address review"
+    },
+    {
+      "url": "https://islod.obrnadzor.gov.ru/view/112778",
+      "reason": "Needs manual classification/address review"
+    }
+  ],
+  "sha256": "f3afe65b0e8f29c6a305b040ba3a8f61ef368d811adae8e487e2b33b60171971",
+  "coverage": "Partial batch; keyword query is not a complete nationwide census; branches are not separate schools."
+}

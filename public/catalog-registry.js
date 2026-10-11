@@ -1,0 +1,9 @@
+/* Organization provenance is separate from verified school websites and staff. */
+function registrySource(s){try{const u=new URL(s.registry_url);return u.origin==='https://islod.obrnadzor.gov.ru'&&/^\/view\/\d+$/.test(u.pathname)&&s.registry_ogrn&&s.registry_checked_at?u.href:null}catch{return null}}
+function registryBadge(s){const url=registrySource(s);return url?`<a class="sourceBadge registryBadge" href="${esc(url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">✓ Реестр Рособрнадзора ↗</a>`:''}
+const registryCardBefore=schoolCard;schoolCard=function(s){const markup=registryCardBefore(s);return registrySource(s)?markup.replace(/<span class="sourceBadge[^>]*>[\s\S]*?<\/span>/,registryBadge(s)):markup};
+function registryDecorate(){const page=$('#app .page');if(!page)return;const route=lifeRoute()[0],s=state.schools.find(x=>x.id===lifeRoute()[1]);
+ if(route==='school'&&s&&registrySource(s)&&!page.querySelector('.registryProvenance')){const title=page.querySelector('.profileTitle');title?.querySelector('.sourceBadge')?.remove();title?.insertAdjacentHTML('beforeend',`${registryBadge(s)}<p class="muted registryProvenance">Действующая лицензия · проверка ${new Date(s.registry_checked_at).toLocaleDateString('ru')}.<br>Сведения об организации из федерального реестра. Учителя и отзывы добавляются отдельно.</p>`)}
+ if(['school-catalog','atmosphere','directors','voting'].includes(route)&&!s&&!page.querySelector('.registryCoverage'))page.querySelector('.sectionHead,.lifeHeading,.lifeSearch,.toolbar')?.insertAdjacentHTML('afterend','<p class="muted registryCoverage">Справочник школ России наполняется. Подтверждённые записи отмечены ссылкой на реестр.</p>');
+}
+new MutationObserver(()=>requestAnimationFrame(registryDecorate)).observe($('#app'),{childList:true});
