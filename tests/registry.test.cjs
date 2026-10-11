@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),{locality,validOgrn,parseSchool,batchSql}=require('../scripts/import-russian-schools.cjs');
+assert.equal(locality('456685, Челябинская область, п.Октябрьский, ул.Ленина, д. 45','Челябинская область'),'п.Октябрьский');
+assert.equal(locality('414040, Астраханская область, г. о. город Астрахань, г. Астрахань, д.52','Астраханская область'),'Астрахань');
+assert.equal(locality('ДАГЕСТАН, С.П. СЕЛЬСОВЕТ УЛЛУБИЕВСКИЙ, С РАССВЕТ, УЛ ДРУЖБЫ, ЗД. 2Б','Республика Дагестан'),'С Рассвет');
+assert.equal(locality('Челябинская область, ул.Ленина, д. 45','Челябинская область'),'');
+assert(validOgrn('1020300977620'));assert(!validOgrn('1020300977621'));
+const labels={'ОГРН':'1020300977620','Текущий статус лицензии':'Действующая','Полное наименование организации (ФИО индивидуального предпринимателя)':'Общеобразовательная школа','Субьект РФ':'Республика Бурятия','Место нахождения организации':'670004, Республика Бурятия, г. Улан-Удэ, ул. Воронежская, 1 Б','Регистрационный номер лицензии':'Л035-01223-03/00173101'};
+const html=()=>Object.entries(labels).map(([k,v])=>`<label class="form-label">${k}</label><div>${v}</div>`).join('');
+assert.equal(parseSchool(html(),'https://islod.obrnadzor.gov.ru/view/113767','Дополнительное образование','2026-10-11'),null);
+const row=parseSchool(html(),'https://islod.obrnadzor.gov.ru/view/113767','Основное общее образование','2026-10-11');assert.equal(row.country_code,'RU');
+labels['Текущий статус лицензии']='Прекращена';assert.equal(parseSchool(html(),'https://islod.obrnadzor.gov.ru/view/113767','Основное общее образование','2026-10-11'),null);
+assert(!/source_url|verified_at|insert into public.teachers|insert into public.reviews/.test(batchSql([row])));
+assert(batchSql([{...row,name:"Школа 'А'"}]).includes("Школа ''А''"));
+const library=JSON.parse(fs.readFileSync('public/reel-library.json'));assert(library.length>=2);assert(library.every(r=>r.source_url.startsWith('https://commons.wikimedia.org/')&&r.license_url&&r.author));
+console.log('PASS: locality parsing, OGRN checksum, active general education only, provenance separated from staff trust, SQL escaping');
