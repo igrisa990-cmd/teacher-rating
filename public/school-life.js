@@ -7,7 +7,7 @@ function lifeId(){return crypto.randomUUID()}
 function lifeLocal(table){return readLocalListV13('schoolLife:'+table)}
 function lifeSave(table,rows){localStorage.setItem('schoolLife:'+table,JSON.stringify(rows))}
 function lifeAuth(){if(state.user)return true;openAuth();return false}
-function lifeError(error){return /42P01|PGRST|does not exist|schema cache/.test(error.code+' '+error.message)?'Общие школьные разделы пока не подключены к базе. Демо-режим уже доступен.':'Не удалось выполнить действие: '+(error.message||'попробуйте ещё раз')}
+function lifeError(error){return /42P01|PGRST|does not exist|schema cache/.test(error.code+' '+error.message)?'Раздел временно недоступен. Попробуйте позже.':'Не удалось выполнить действие: '+(error.message||'попробуйте ещё раз')}
 function lifeHeader(title,subtitle=''){return `<div class="lifeHeading"><button class="soft back" onclick="backToPrevious('home')">← Назад</button><h1>${esc(title)}</h1>${subtitle?`<p class="muted">${esc(subtitle)}</p>`:''}</div>`}
 function lifeFrame(content){return `<div class="page wrap schoolLifePage">${content}</div>`}
 function lifeButton(icon,label,route){return `<button class="lifeTile" onclick="go('${route}')"><i>${icon}</i><b>${label}</b><span>→</span></button>`}

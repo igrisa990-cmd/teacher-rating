@@ -1,0 +1,23 @@
+# Real accounts and Moscow Oblast
+
+The site no longer offers demo or anonymous sign-in. Saved local demo flags/reviews are cleared. The real catalog loads stable ID-ordered batches of 500, including records beyond Supabase's first 1,000 rows; an unavailable catalog shows a retry state instead of fabricated fallback data. Existing verified email accounts retain sign-in, including moderators. Phone numbers stay in Supabase Auth and are never copied into public profiles or chat aliases.
+
+Apply `20261011_real_catalog_accounts.sql` and `20261011_real_account_grants.sql`. The migration reversibly archives 93 explicitly marked Russian demo schools and 12 unverified original Latvian seeds. Restrictive RLS excludes them and their dependent staff/reviews/classes/messages/reels; original rows remain available to administrators. Do not rerun the old reset/bootstrap/demo SQL scripts on production. Restoring a reviewed school means clearing `archived_at` and `archive_reason`; restoring all seeds would also restore their synthetic staff/ratings.
+
+Writes now require a server-confirmed phone or email account through `private.has_verified_account()`. Editable user metadata does not grant verification. Anonymous Supabase accounts may still exist in Auth but cannot submit catalog requests, votes, reviews or community content. Private helper permissions are explicit; ownership policies and moderator membership still apply. Number confirmation is not proof of school enrollment or teacher identity.
+
+## SMS activation required
+
+The phone OTP UI uses real `signInWithOtp` / `verifyOtp(type:'sms')`, persistent sessions, Russian mobile normalization, a 60-second resend countdown and explicit send/verification failures. After confirmation, new users set a display name and region. A failed send or code never creates a signed-in UI. Client countdown is only UX; backend rate limits must enforce SMS abuse protection.
+
+As checked on 2026-10-11, the hosted project's `/auth/v1/settings` reports `external.phone=false`. The UI reads this setting and explains when SMS is unavailable. Phone registration is not operational until the project owner configures an SMS provider and enables phone sign-in in [Supabase Auth Providers](https://supabase.com/dashboard/project/jjzjmwvnhxwwxlyeeciz/auth/providers). Put provider credentials only into Supabase's protected settings; never commit them or send them to the browser. Verify delivery to Russian mobile networks with the selected provider, configure spending/rate limits and Auth CAPTCHA before enabling public SMS. No paid account, SMS credentials or real phone numbers were invented for this release.
+
+Reference: [Supabase phone login](https://supabase.com/docs/guides/auth/phone-login). Before activation, test a provider-approved test number and both new/existing accounts, expiry, resend and logout on two devices. Current automated tests mock provider responses; they do not claim real delivery.
+
+## Moscow Oblast collection
+
+`node scripts/import-moscow-oblast.cjs --all-organizations` walks the public federal registry's active licenses for region `50` (Moscow Oblast, not Moscow city `77`). It saves per-page/per-organization checkpoints under `work/moscow-oblast`, checks OGRN and all listed branches' current general education programs, deduplicates legal organizations by OGRN and writes reviewable JSON/report/SQL. Public names/addresses/license evidence are retained, with no staff identities or fabricated ratings. Exclude preschool-only, sport/music-only, professional training and individual entrepreneurs without an organization OGRN.
+
+The snapshot has 444 pages and 4,438 unique license rows. The report records the exact eligible count, unresolved entries, failures and hash. A legal organization may unite several schools/campuses; the import is not a building-level census. Unresolved localities are held for review, not guessed. Rechecking licenses/closures and school-site staff imports remain separate steps. The script prepares data only; it never writes production. Source access challenges stop/reject collection rather than being bypassed.
+
+Tests: `node tests/real-account.test.cjs`; `node tests/real-catalog-sql.cjs` with `PGLITE_PATH` configured; existing registry/catalog/social tests. The SQL test exercises archived-data visibility, original-row retention, forged metadata/anonymous rejection, real verified phone submission and archived duplicate exclusion. Supabase advisors retain earlier warnings about legacy API functions/profile policies and password protection; see [database security linter](https://supabase.com/docs/guides/database/database-linter). New policies do not expose phone data or give publication rights.

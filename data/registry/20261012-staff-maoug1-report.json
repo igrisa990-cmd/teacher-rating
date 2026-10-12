@@ -1,0 +1,12 @@
+{
+  "source": "https://maoug1.ru/sveden/employees",
+  "identitySource": "https://maoug1.ru/sveden/common",
+  "identity": {
+    "name": "Муниципальное автономное общеобразовательное учреждение Городского округа Балашиха \"Гимназия №1\"",
+    "address": "143987, Российская Федерация, Центральный федеральный округ, Московская обл., г. Балашиха, мкр Железнодорожный, ул. Новая, дом 17"
+  },
+  "licensedOgrn": "1035002455993",
+  "teachers": 36,
+  "excludedBlocks": 78,
+  "coverage": "One school, currently published professional staff list. Names/subjects in same microdata block. No phone numbers, emails, education biographies, or ratings imported."
+}
