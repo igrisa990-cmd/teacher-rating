@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vercel dev",
-    "test": "node -e \"require('./tests/catalog.test.cjs');require('./tests/school-life.test.cjs');require('./tests/social-ui.test.cjs')\"",
-    "test:catalog-sql": "node tests/catalog-sql.cjs"
+    "test": "node -e \"require('./tests/catalog.test.cjs');require('./tests/school-life.test.cjs');require('./tests/social-ui.test.cjs');require('./tests/registry.test.cjs');require('./tests/real-account.test.cjs');require('./tests/staff-and-map.test.cjs');require('./tests/catalog-search.test.cjs')\"",
+    "test:catalog-sql": "node tests/catalog-sql.cjs",
+    "test:real-catalog-sql": "node tests/real-catalog-sql.cjs",
+    "test:catalog-entry-sql": "node tests/catalog-entry-sql.cjs"
   }
 }
