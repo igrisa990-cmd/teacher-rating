@@ -2,7 +2,7 @@
   "source": "https://www.openstreetmap.org/copyright",
   "license": "ODbL-1.0",
   "raw": 37595,
-  "published": 4073,
+  "published": 4044,
   "regions": [
     "Алтайский край",
     "Амурская область",
@@ -88,14 +88,14 @@
     "Ярославская область"
   ],
   "excluded": {
-    "incomplete_address": 22670,
-    "not_general_school": 886,
-    "covered_by_license_registry": 1469,
+    "incomplete_address": 22594,
+    "not_general_school": 1012,
+    "covered_by_license_registry": 1453,
     "missing_name": 7973,
-    "boundary_unresolved": 456,
+    "boundary_unresolved": 451,
     "same_address": 57,
     "existing_school_match": 11
   },
   "coverage": "Map records with complete explicit addresses only; not a complete school census. License status and staff not verified. Moscow Oblast uses the separate license register. Boundary assignment uses geoBoundaries RUS ADM1 (2017, ODbL) and requires review near boundaries.",
-  "sha256": "bc3a57224035deb55a65f2bef8599c46c4301bfada23c94bae3d623744284e32"
+  "sha256": "494b897b0f9912bcefe86d6c3cd874c2ea151af7bc6d4c79dadbbda8dc23f140"
 }
