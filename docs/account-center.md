@@ -1,0 +1,23 @@
+# Account center (2026-10-13)
+
+The email login, signup, confirmation resend and password recovery UI uses Supabase Auth. An unconfirmed signup does not set a logged-in UI. Passwords are sent only to Auth, never stored by the app. New passwords require 10–128 characters with letters and digits. Auth recovery is handled through `PASSWORD_RECOVERY`, with the listener bound before initialization completes. Requests to a dismissed email form do not open new dialogs.
+
+`profiles` is owner-readable; phone/email remain exclusively in Auth. Names, a short private bio and an optional self-reported school can be edited. School selection is not enrollment verification. The profile form saves profile and region/avatar preferences atomically with `save_my_profile`, a security-invoker RPC. Column grants prevent clients from modifying roles or IDs; signup always assigns `student`. Moderator rights continue to come from `catalog_moderators`.
+
+Owner-only `account_preferences` persists the region, 12 existing themes, light/dark/system mode, motion preference, avatar color and mobile dock sections. Signed-out settings remain device-local. Account favorites use the existing `favorites` table; the app does not silently import another person's device-local favorites. Import is an explicit action. Activity queries are scoped to the current account and show the most recent 30 teacher, school and director ratings with exact totals. Failed reads/writes show a retry/error state. Logging out clears the loaded private profile and activity; global signout also explains JWT expiration delay.
+
+## Email delivery activation
+
+Public email signups require a configured SMTP provider. Supabase's built-in mailer only sends to project-team addresses and has a small quota; email auth being enabled does not prove public delivery works. Never disable email confirmation to work around delivery failures. See [Supabase SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
+
+The owner selected `gnavi00@mail.ru` for the first launch. Configure [Supabase SMTP](https://supabase.com/dashboard/project/jjzjmwvnhxwwxlyeeciz/auth/smtp) with host `smtp.mail.ru`, port `465` (SSL/TLS), sender/user `gnavi00@mail.ru`, sender name `Учитель+`. The owner must create and enter a Mail.ru app password restricted to **sending email only**, never the mailbox password; do not commit or share the secret in chat. See [Mail.ru's official instructions](https://help.mail.ru/mail/login/mailer/). This mailbox is a pilot sender, not a claim of high-volume transactional capacity.
+
+In [Auth URL Configuration](https://supabase.com/dashboard/project/jjzjmwvnhxwwxlyeeciz/auth/url-configuration), set Site URL to `https://teacher-rating-iota.vercel.app` and allow the exact redirect `https://teacher-rating-iota.vercel.app/`. The client sends this same-origin URL for signup, resend and recovery. Keep Confirm Email enabled. After setup, the owner should register a new address they control, open the delivered link, reload the profile on another device, request recovery and confirm the new password. Delivery and redirect correctness are not verified until this real test succeeds. Current automated tests mock mail responses; they do not claim email delivery.
+
+## Deferred SMS work
+
+The owner chose email only and deferred SMS. The reviewed SMS.RU handler is retained in the ignored local work directory, outside this email release; no SMS function was deployed, no provider credentials entered, and phone auth stays disabled. A private delivery guard migration was already applied before that decision. It has no timer or outbound network access and is callable only by `service_role`. It keeps hashes and statuses for up to 24 hours with cleanup on the next request, limits total sends to 30/hour and 3/10 minutes per phone, and prevents duplicate in-flight sends. The prepared handler verifies Standard Webhooks signatures, requires explicit enablement and an allowlist, checks each recipient's provider response, fails closed on missing configuration, never logs OTPs/keys, and does not report a dry run as delivery. Future activation requires the owner's explicit authorization for SMS.RU, its secrets and delivery testing.
+
+## Validation
+
+`node tests/account-center.test.cjs` and `node tests/account-center-sql.cjs` with `PGLITE_PATH` exercise unconfirmed signup, failure/cancelled requests, recovery, ownership, forged-role rejection, atomic rollback, settings constraints and SMS replay/rate limits. Existing catalog/account tests remain relevant. Browser checks cover desktop/mobile auth, profile editing and settings; authenticated UI checks use a clearly local isolated fixture and do not create fake production users or reviews.
