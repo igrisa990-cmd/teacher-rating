@@ -1,7 +1,7 @@
 /* Read the public federal license register. Produce a reviewable batch; never write to DB. */
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const ORIGIN='https://islod.obrnadzor.gov.ru';
-function text(html){return html.replace(/<[^>]*>/g,' ').replace(/&(?:amp|lt|gt|quot|apos|nbsp);|&#(?:x[\da-f]+|\d+);/gi,x=>{const names={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&apos;':"'",'&nbsp;':' '};return names[x]??String.fromCodePoint(x[2].toLowerCase()==='x'?parseInt(x.slice(3),16):parseInt(x.slice(2),10))}).replace(/\s+/g,' ').trim()}
+function text(html){return html.replace(/<[^>]*>/g,' ').replace(/&(?:amp|lt|gt|quot|apos|nbsp);|&#(?:x[\da-f]+|\d+);/gi,x=>{const names={'&amp;':'&','&lt;':'<','&gt;':'>','&quot;':'"','&apos;':"'",'&nbsp;':' '};return names[x.toLowerCase()]??String.fromCodePoint(x[2].toLowerCase()==='x'?parseInt(x.slice(3),16):parseInt(x.slice(2),10))}).replace(/\s+/g,' ').trim()}
 function fields(html){return Object.fromEntries([...html.matchAll(/<label class="form-label">([\s\S]*?)<\/label>\s*<div[^>]*>([\s\S]*?)<\/div>/g)].map(m=>[text(m[1]),text(m[2])]))}
 function validOgrn(v){return /^\d{13}$/.test(v)&&Number(BigInt(v.slice(0,12))%11n%10n)===Number(v[12])}
 function canonicalRegion(v){return v.replace(/^г\.\s*/,'').replace('Республика Татарстан (Татарстан)','Республика Татарстан').replace('Республика Адыгея (Адыгея)','Республика Адыгея').replace('Кемеровская область','Кемеровская область — Кузбасс').replace('Чувашская Республика - Чувашия','Чувашская Республика').replace('Республика Северная Осетия - Алания','Республика Северная Осетия — Алания').replace('Ханты-Мансийский автономный округ - Югра','Ханты-Мансийский автономный округ — Югра')}

@@ -1,0 +1,13 @@
+{
+  "preparedAt": "2026-10-14T18:52:51.110Z",
+  "source": {
+    "source": "https://islod.obrnadzor.gov.ru/opendata-lic/data-20261013-structure-20150421.zip",
+    "downloadedAt": "2026-10-14T16:50:36.241Z",
+    "bytes": 94031284,
+    "sha256": "c796d32407e86b324bf2ce936480bd5dadbfcfb67c20484cffd7762c359c34aa"
+  },
+  "eligible": 480,
+  "processedSha256": "86f3ba6af1e6d740a56f98105422e5bf31e8744a6cf4655f6167942a53eb0bd1",
+  "gzipSha256": "57d4dac2919de2759aa29411bf3e41278965e01bf48c9eea99b99012a8bce8a0",
+  "method": "Explicit settlement labels: leading postal code before city, urban settlement, railway station, stanitsa/sloboda, and Latin c/a typing variants. No city, street or house is guessed. Municipality-only or foreign/unresolved addresses remain for review."
+}
