@@ -1,0 +1,15 @@
+{
+  "preparedAt": "2026-10-15T10:26:50.880Z",
+  "source": "Registry-linked official school websites, current identity verification and general license required",
+  "previousInventoryPass": "2026-10-14",
+  "retryInventory": 2202,
+  "retryCompleted": 2202,
+  "fullTeachers": 33102,
+  "teachers": 4672,
+  "newTeachers": 4672,
+  "changedTeachers": 0,
+  "schools": 218,
+  "processedSha256": "e25e16a03ffeaf0eab90d0586996636a4377ab9a981875a4d1dc073533532064",
+  "gzipSha256": "088a7535df536b29f9dddc7733bd6f3907d55cf3af7bc1c6ff5f40d73a0f9f0c",
+  "coverage": "Full source inventory was attempted previously. Every identity-confirmed unsupported HTML roster was revisited in a finite pass. Only new or materially changed published professional records enter this delta; current employment and a complete national workforce are not claimed."
+}

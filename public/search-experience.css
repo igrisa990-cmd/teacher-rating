@@ -1,0 +1,60 @@
+/* Scoped layout rules keep the twelve existing themes and their motion. */
+.searchExperience{max-width:1080px;padding-top:40px;padding-bottom:36px}
+.searchExperience .directoryHeading{margin-bottom:22px}
+.searchExperience .directoryHeading h1{margin:10px 0 12px;letter-spacing:-.045em}
+.searchExperience .directoryHeading p{font-size:14px;line-height:1.65;margin:0 0 12px}
+.searchCatalogCount{font-size:12px;color:var(--muted)}.searchCatalogCount span{padding:0 7px;opacity:.6}
+.searchExperience .directoryControls{position:relative;padding:16px;border-radius:23px;margin:20px 0 25px;background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:var(--soft-shadow)}
+.searchCommandRow{display:grid;grid-template-columns:minmax(160px,1fr) minmax(170px,235px) auto;align-items:stretch;gap:9px;margin:0}
+.searchExperience .directoryInput{height:62px;min-width:0;padding:0 16px;gap:11px;background:var(--bg);border-radius:15px;border:1px solid var(--line);box-shadow:none}
+.searchExperience .directoryInput>span{font-size:25px;color:var(--muted)}
+.searchExperience .directoryInput input{min-width:0;width:100%;padding:0;height:58px;border:0!important;outline:0!important;box-shadow:none!important;background:transparent;font-size:15px;border-radius:0}
+.searchExperience input[type=search]::-webkit-search-cancel-button{display:none}
+.searchExperience .directoryInput:focus-within{outline:2px solid color-mix(in srgb,var(--brand) 70%,transparent);outline-offset:2px}
+.searchExperience .directoryInput button{flex:none;width:28px;height:32px;font-size:22px;padding:0;border:0;background:transparent;box-shadow:none}
+.searchExperience .directoryInput button[hidden]{display:none}
+.searchRegion{position:relative;min-width:0}
+.searchRegion summary{height:62px;display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:10px 13px;border:1px solid var(--line);border-radius:15px;background:var(--surface2)}
+.searchRegion summary::-webkit-details-marker,.searchCity summary::-webkit-details-marker{display:none}
+.searchRegion summary>span:first-child{color:var(--brand);font-size:21px}
+.searchRegion summary>span:nth-child(2){display:grid;gap:5px;min-width:0;flex:1}
+.searchRegion summary small{font-size:10px;color:var(--muted);font-weight:500}
+.searchRegion summary b{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:650}
+.searchRegionChevron{color:var(--muted);transition:transform .18s}.searchRegion[open] .searchRegionChevron{transform:rotate(180deg)}
+.searchRegion summary:hover,.searchRegion[open] summary{border-color:color-mix(in srgb,var(--brand) 55%,var(--line))}
+.searchRegionPopover{position:absolute;right:0;top:calc(100% + 10px);width:340px;max-width:calc(100vw - 44px);padding:16px;z-index:45;background:var(--surface);border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);animation:directoryReveal .16s ease-out}
+.searchRegionPopover>label{display:block;font-size:12px;font-weight:650;margin-bottom:9px}
+.searchRegionPopover>input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);color:var(--text);padding:11px 12px;font:inherit;font-size:13px;box-sizing:border-box}
+.searchRegionPopover #directoryRegionOptions{max-height:270px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;margin:10px -5px}
+.searchRegionPopover [role=option]{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:11px 10px;min-height:42px;background:transparent;border:1px solid transparent;color:var(--text);border-radius:9px;font:inherit;font-size:12px;line-height:1.5}
+.searchRegionPopover [role=option]:hover,.searchRegionPopover .keyboardActive{background:var(--surface2);border-color:var(--line)}
+.searchRegionPopover [aria-selected=true]{color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
+.searchMyRegion{display:block;margin-top:9px;border:0;border-radius:9px;background:var(--surface2);color:var(--brand);width:100%;padding:10px;text-align:left;font-size:11px}
+.searchRegionNote{display:block;border-top:1px solid var(--line);padding-top:11px;font-size:10px;color:var(--muted);line-height:1.5}
+.searchRegionEmpty{padding:15px 8px;color:var(--muted);font-size:12px;line-height:1.6}
+.searchSubmit{display:flex;align-items:center;justify-content:center;gap:12px;min-height:62px;border-radius:15px;padding:0 20px;box-shadow:none;font-size:13px}
+.searchFilterRow{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:13px;position:relative}
+.searchExperience .directoryControls .searchTypeTabs{position:static;display:flex;gap:3px;width:auto;margin:0;padding:4px;background:var(--surface2);border:1px solid var(--line);border-radius:12px;box-shadow:none}
+.searchExperience .directoryControls .searchTypeTabs button{min-width:70px;min-height:34px;margin:0;padding:7px 13px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:12px;box-shadow:none}
+.searchExperience .directoryControls .searchTypeTabs button.active{color:var(--text);background:var(--surface);box-shadow:var(--soft-shadow)}
+.searchCity{position:relative;margin-left:auto}
+.searchCity summary{cursor:pointer;list-style:none;font-size:12px;line-height:1.5;color:var(--muted);padding:10px 7px}
+.searchCity label{position:absolute;right:0;top:calc(100% + 8px);display:block;width:280px;z-index:40;background:var(--surface);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);padding:15px;font-size:11px;color:var(--muted)}
+.searchCity input{display:block;width:100%;min-width:0;min-height:43px;background:var(--surface2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;margin-top:9px;font:inherit;font-size:13px;box-sizing:border-box}
+.searchExperience .directoryResult{padding:20px;border:1px solid var(--line);border-radius:17px;background:var(--surface);margin:10px 0;gap:16px}
+.searchExperience .directoryResult h3{margin:4px 0 7px;font-size:16px;letter-spacing:-.015em}
+.searchExperience .directoryResult small{font-size:10px}.searchExperience .directoryResult .directoryIcon{background:var(--surface2)}
+.searchExperience .directoryFallback{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:18px 2px;margin:20px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;font-size:12px;color:var(--muted)}
+.searchExperience .directoryFallback>span{margin-right:auto}.searchExperience .directoryFallback button{margin:0;padding:9px 12px;font-size:11px}.searchExperience .directoryFallback small{width:100%;font-size:10px}
+header .topbar #paletteBtn,header .topbar #themeBtn{display:none!important}.topbar .settingsNav{order:5;display:flex;align-items:center;gap:7px;white-space:nowrap;min-height:42px}.topbar .settingsNav.active{color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,var(--surface))}.dockRestore{display:none!important}
+.settingsWorkspace{min-width:0}.settingsTabs{display:flex;align-items:center;gap:5px;flex-wrap:wrap;min-height:0;padding:6px;margin-bottom:17px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:none}
+.settingsTabs [role=tab]{display:flex;align-items:center;justify-content:center;gap:8px;flex:1;padding:12px 13px;border:0;border-radius:11px;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:650}
+.settingsTabs [aria-selected=true]{background:var(--surface2);color:var(--brand)}
+.settingsWorkspace section[hidden]{display:none!important}.profileRegionEdit{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:12px;border:1px solid var(--line);border-radius:11px;padding:10px 8px;background:var(--surface2);color:var(--brand);font-size:11px}
+.signupWelcomeBox{max-width:470px!important}.signupWelcome{text-align:center;padding:3px 2px}.signupWelcome .modalhead{margin-bottom:22px}.signupWelcomeMark{display:grid;place-items:center;width:67px;height:67px;margin:0 auto 20px;border:1px solid color-mix(in srgb,var(--brand) 30%,var(--line));border-radius:23px;background:color-mix(in srgb,var(--brand) 12%,var(--surface));color:var(--brand);font-size:29px}
+.signupWelcome h2{font-size:28px;letter-spacing:-.04em;margin:0 0 12px}.signupWelcome>.muted{font-size:14px;line-height:1.7;max-width:330px;margin:0 auto 20px}.signupBenefits{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:24px}.signupBenefits span{font-size:10px;color:var(--muted);padding:7px 9px;border:1px solid var(--line);border-radius:9px}
+.signupWelcome .accountFull{min-height:47px;border-radius:13px}.signupSkip{margin-top:9px;background:var(--surface2);color:var(--text)}.signupLogin{font-size:12px;color:var(--muted);margin:20px 0}.signupLogin button{font-size:12px}.signupWelcome>small{display:block;font-size:10px;line-height:1.7;margin-top:15px}
+@media(max-width:800px){.searchCommandRow{grid-template-columns:minmax(0,1fr) 210px}.searchSubmit{display:none}.searchExperience .directoryInput{height:58px}.searchRegion summary{height:58px}.searchExperience .directoryInput input{height:54px}.searchExperience .directoryHeading h1{font-size:37px}.topbar .settingsNav{padding:10px}}
+@media(max-width:600px){.searchExperience{padding-top:24px}.searchExperience .directoryHeading h1{font-size:31px;letter-spacing:-.035em}.searchExperience .directoryHeading p{font-size:12px;max-width:290px}.searchCatalogCount{font-size:10px}.searchExperience .directoryControls{padding:12px;border-radius:19px;margin-top:17px}.searchCommandRow{grid-template-columns:minmax(0,1fr)}.searchExperience .directoryInput{height:54px;border-radius:12px;padding:0 12px}.searchExperience .directoryInput input{height:50px;font-size:16px}.searchRegion summary{height:48px;border-radius:12px;padding:8px 11px}.searchRegion summary>span:nth-child(2){display:flex;align-items:center;justify-content:space-between;gap:10px}.searchRegion summary small{font-size:10px;white-space:nowrap}.searchRegion summary b{font-size:12px;max-width:190px}.searchRegionPopover{left:0;right:auto;width:100%;max-width:none;box-sizing:border-box}.searchRegionPopover>input,.searchCity input{font-size:16px}.searchFilterRow{gap:7px;align-items:start;flex-wrap:wrap;margin-top:12px}.searchExperience .directoryControls .searchTypeTabs{flex:1;gap:0}.searchExperience .directoryControls .searchTypeTabs button{min-width:0;flex:1;font-size:11px;padding:7px 11px}.searchCity{width:100%;margin:0}.searchCity summary{font-size:11px;padding:7px 3px}.searchCity label{left:0;right:auto;width:100%;box-sizing:border-box}.searchExperience .directoryResult{grid-template-columns:36px minmax(0,1fr) 34px;padding:14px 12px;gap:10px;border-radius:14px}.searchExperience .directoryResult h3{font-size:14px}.searchExperience .directoryResult p{font-size:11px;line-height:1.6}.searchExperience .directoryResult>button{padding:9px}.searchExperience .directoryFallback{gap:7px;font-size:11px}.searchExperience .directoryFallback>span{width:100%;margin-bottom:3px}.settingsNavLabel{display:none}.topbar .settingsNav{width:39px;height:39px;min-height:39px;justify-content:center;padding:0}.settingsTabs{gap:3px;padding:5px}.settingsTabs [role=tab]{font-size:10px;padding:11px 7px;gap:5px}.signupWelcome h2{font-size:25px}}
+@media(prefers-reduced-motion:reduce){.searchRegionPopover{animation:none}.searchRegionChevron{transition:none}}
+@media(max-width:600px){header nav.topbar{display:grid!important;grid-template-columns:minmax(0,1fr) 44px 44px 44px!important;gap:6px}.topbar .logo{order:1;grid-column:1;justify-self:start;min-width:0}.topbar .account{order:2;grid-column:2}.topbar .settingsNav{order:3;grid-column:3;width:44px;height:44px;min-height:44px}.topbar .mobileToggle{order:4;grid-column:4;width:44px;height:44px}.topbar .search{order:10;grid-column:1/-1}.topbar .account>.primary,.topbar .account>.soft{width:44px;height:44px}}

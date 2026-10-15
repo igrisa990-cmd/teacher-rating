@@ -2,3 +2,6 @@ node_modules/
 work/
 *.log
 supabase/.temp/
+# Keep new personnel snapshots local; publish aggregate reports and import code.
+data/registry/*national-staff*.ndjson.gz
+data/registry/*staff-changes*.ndjson.gz

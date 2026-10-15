@@ -1,0 +1,15 @@
+{
+  "preparedAt": "2026-10-15T10:12:16.675Z",
+  "source": {
+    "source": "https://islod.obrnadzor.gov.ru/opendata-lic/data-20261014-structure-20150421.zip",
+    "downloadedAt": "2026-10-15T10:03:01.228Z",
+    "bytes": 94510202,
+    "sha256": "34fe7c80f0e61bd5a19bfad8cff47430845fcf63f971d595e032261a722808bf"
+  },
+  "fullEligible": 37642,
+  "eligible": 24,
+  "newOrganizations": 0,
+  "processedSha256": "5ece5d6831a7fafd86b582f6c2169635ada371ef79ec48e0b3dcf51cfcf01283",
+  "gzipSha256": "913953f50d483ca969063d27bb5f4f2cd755525271096c142d0ebddff857b29c",
+  "method": "Full dated official archive inspected. Delta excludes unchanged metadata and timestamp-only differences; existing source audit remains intact."
+}
