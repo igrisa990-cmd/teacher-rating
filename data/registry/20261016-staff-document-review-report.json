@@ -1,0 +1,22 @@
+{
+  "preparedAt": "2026-10-15T21:09:31.315Z",
+  "pendingIdentityVerifiedSites": 1365,
+  "identityCacheMissing": 0,
+  "identityMismatch": 0,
+  "documentSchools": 594,
+  "documentLinks": 1598,
+  "formats": {
+    "xls": 21,
+    "docx": 217,
+    "pdf": 1218,
+    "doc": 61,
+    "xlsx": 81
+  },
+  "outcomes": {
+    "date_requires_review": 889,
+    "explicitly_older_document": 239,
+    "current_year_candidate": 409,
+    "legacy_binary_word": 61
+  },
+  "coverage": "Inventory of links only; upload-folder dates do not prove roster currency. Documents need date, table layout, teaching-role and same-row identity validation before import. Cached HTML check times are retained. No document personnel were imported by this audit."
+}
