@@ -1,0 +1,17 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');
+(async()=>{const nodes=new Map(),el=id=>{if(!nodes.has(id))nodes.set(id,{isConnected:true,innerHTML:'',hidden:false,disabled:false,insertAdjacentHTML(_,s){this.innerHTML+=s}});return nodes.get(id)};
+const school={id:'school-one',name:'Лицей Математика',region:'Московская область'},other={...school,id:'school-two'};let calls=[],pending;
+const c={console,preferredRegion:()=>school.region,state:{schools:[school,other],teachers:[],rateSearch:{q:school.name,type:'teachers'},db:null},openCatalogRequest(){},catalogRequestMarkup:()=>'',window:{RUNTIME_CONFIG:{}},catalogBusy:false,catalogPending:null,openAuth(){},openModal(){},closeModal(){},toast(){},$:el,document:{querySelector:()=>null,querySelectorAll:()=>[]},catalogPayload:()=>({}),catalogNormalize:s=>String(s).toLowerCase(),esc:s=>String(s),initials:()=>'',registryBadge:()=>'',verificationBadge:()=>'',URL,URLSearchParams,AbortController,AbortSignal,setTimeout:()=>1,clearTimeout(){},requestAnimationFrame(){},fetch:async()=>{throw Error('Unexpected fetch')}};
+vm.createContext(c);vm.runInContext(fs.readFileSync('public/catalog-search.js','utf8'),c);
+const rows=Array.from({length:21},(_,i)=>({id:'teacher-'+i,school_id:school.id,name:'Учитель '+i,subject:'Математика'}));
+const builder={select(){return this},eq(k,v){calls.push(['school',k,v]);return this},order(){return this},range(a,b){calls.push(['range',a,b]);return pending?new Promise(resolve=>pending=resolve):Promise.resolve({data:rows})}};
+c.state.db={from(table){assert.equal(table,'teachers');return builder},rpc:async(name,args)=>{calls.push(['rpc',name,args]);return{data:[]}}};
+vm.runInContext("directorySchoolId='school-one'",c);await c.directoryLoad();assert.deepEqual(calls.slice(0,2),[['school','school_id',school.id],['range',0,20]]);assert.equal(c.state.teachers.length,20);assert(c.state.teachers.every(t=>t.school_id===school.id));assert.equal(el('#directoryMore').hidden,false);
+await c.directoryLoad(true);assert.deepEqual(calls[3],['range',20,40]);
+pending=true;const old=c.directoryLoad();c.directoryChange('фад');const expected=el('#directoryResults').innerHTML;pending({data:[{...rows[0],name:'Устаревший ответ'}]});await old;assert.equal(el('#directoryResults').innerHTML,expected,'A new query must discard a pending roster response');pending=null;
+await c.directoryLoad();assert.equal(calls.at(-1)[0],'rpc');assert.equal(calls.at(-1)[2].p_query,'фад');
+let rpcSignal,finishRpc;c.state.db.rpc=()=>({abortSignal(signal){rpcSignal=signal;return new Promise(resolve=>finishRpc=resolve)}});
+const obsolete=c.directoryLoad();c.directoryChange('фадеевва');assert.equal(rpcSignal.aborted,true,'Typing must cancel the previous HTTP search');
+const afterTyping=el('#directoryResults').innerHTML;finishRpc({data:[]});await obsolete;assert.equal(el('#directoryResults').innerHTML,afterTyping,'Cancelled RPC must not replace the next search');
+console.log('PASS: same-name schools remain distinct by ID, full roster pagination, stale responses ignored, obsolete HTTP requests cancelled');
+})().catch(e=>{console.error(e);process.exitCode=1});
