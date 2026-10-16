@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-10-16T19:10:07.739Z",
+  "finishedAt": "2026-10-16T19:16:50.544Z",
+  "inventory": 68,
+  "completed": 68,
+  "requests": 393,
+  "bytes": 64719774,
+  "outcomes": {
+    "prepared": 46,
+    "non_public_address": 2,
+    "staff_format_needs_review": 13,
+    "aborted": 5,
+    "socket hang up": 1,
+    "The operation was aborted": 1
+  },
+  "schoolsWithTeachers": 46,
+  "teachers": 1612,
+  "completeInventoryPass": true
+}
