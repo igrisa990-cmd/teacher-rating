@@ -1,0 +1,7 @@
+{
+  "preparedAt": "2026-10-16T16:28:08.269Z",
+  "validatedDocuments": 170,
+  "schools": 113,
+  "teacherRows": 2539,
+  "method": "Separate inventory copy; original HTML checks retained. Deduplicate full names within an organization, merge only explicit published subjects, then apply the existing current-license and cross-organization duplicate-roster guards."
+}

@@ -1,0 +1,8 @@
+{
+  "documents": 44,
+  "outcomes": {
+    "tables_extracted": 44
+  },
+  "reader": "Apache POI HWPF 5.5.1; bounded read-only processes, no Office automation or macro execution",
+  "reader_sha256": "75e1c39d683435ebd03bb973a909f191966c0240b042b44e8a7d2d76b858c9ce"
+}

@@ -114,6 +114,19 @@ def extract_document(meta):
                 else: partial=True
                 workbook.unload_sheet(index)
         finally: workbook.release_resources()
+    elif meta['format']=='doc':
+        import xml.etree.ElementTree as ET
+        if meta.get('doc_reader_version')!=1: raise ValueError('legacy_reader_required')
+        xml=Path(meta['doc_tables_file']).read_bytes()
+        if len(xml)>24000000 or hashlib.sha256(xml).hexdigest()!=meta['doc_tables_sha256']: raise ValueError('legacy_table_hash_mismatch')
+        document=ET.fromstring(xml);title=document.findtext('title','')[:2000]
+        for table in document.findall('table'):
+            rows=[[clean(cell.text) for cell in row.findall('cell')] for row in table.findall('row')]
+            if len(rows)>3000 or any(len(row)>60 for row in rows):raise ValueError('legacy_table_size_limit')
+            if not title:title=' '.join(' '.join(row) for row in rows[:4])[:2000]
+            mapping,start=header_map(rows)
+            if mapping:tables.extend(table_people(rows[start:],mapping))
+            else:partial=True
     if not current_date_evidence(meta,title[:2000]): return {'status':'document_date_requires_review','rows':[]}
     unique={}
     for person in tables:
@@ -128,10 +141,10 @@ def process_one(args):
     meta_file,output=args;meta=json.loads(meta_file.read_text(encoding='utf-8'));target=output/meta_file.name
     if target.exists():
         saved=json.loads(target.read_text(encoding='utf-8'))
-        if saved.get('documentParserVersion',0)>=4 or saved.get('documentParserVersion',0)>=2 and saved['status']!='table_format_requires_review':return saved
+        if saved.get('documentParserVersion',0)>=5 or meta['format']!='doc' and (saved.get('documentParserVersion',0)>=4 or saved.get('documentParserVersion',0)>=2 and saved['status']!='table_format_requires_review'):return saved
     try: parsed=extract_document(meta)
     except Exception as e: parsed={'status':type(e).__name__+': '+str(e)[:160],'rows':[]}
-    result={**meta,**parsed,'documentParserVersion':4};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
+    result={**meta,**parsed,'documentParserVersion':5};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--root',default='work/staff-documents-20261016');parser.add_argument('--workers',type=int,default=3);args=parser.parse_args()

@@ -23,3 +23,18 @@ assert p['current_date_evidence']({'url':'https://school.example/2026.pdf'},'П�
 assert not p['current_date_evidence']({'url':'https://school.example/staff.pdf'},'Фамилия имя отчество Иванова Анна Петровна Повышение квалификации 2026')
 assert p['current_date_evidence']({'url':'https://school.example/staff.pdf'},'Список работников на 2026-2027 учебный год')
 print('PASS: explicit name/role columns, split names, no role borrowing, professional subjects, private-field rejection and academic dates')
+import tempfile,hashlib
+from pathlib import Path
+with tempfile.TemporaryDirectory(dir=Path('work').resolve()) as folder:
+    assert Path(folder).resolve().is_relative_to(Path('work').resolve())
+    source=Path(folder)/'source.doc';source.write_bytes(b'local verified source fixture')
+    xml=Path(folder)/'tables.xml'
+    body='<document><title>Список работников на 2026-2027 учебный год</title><table><row><cell>ФИО</cell><cell>Должность</cell><cell>Преподаваемые предметы</cell><cell>Email</cell></row><row><cell>Иванова Анна Петровна</cell><cell>Учитель</cell><cell>Математика</cell><cell>private@example.test</cell></row></table></document>'
+    xml.write_text(body,encoding='utf-8')
+    meta={'file':str(source),'format':'doc','sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'doc_reader_version':1,'doc_tables_file':str(xml),'doc_tables_sha256':hashlib.sha256(xml.read_bytes()).hexdigest(),'url':'https://school.example/staff.doc','source_url':'https://school.example/staff.doc','identity_url':'https://school.example/common','identity_method':'explicit_ogrn','school_ogrn':'1020300977620','downloadedAt':'2026-10-16T16:00:00Z'}
+    result=p['extract_document'](meta);assert result['status']=='prepared' and len(result['rows'])==1;assert 'private@' not in str(result['rows'])
+    bad={**meta,'doc_tables_sha256':'0'*64}
+    try:p['extract_document'](bad);raise AssertionError('Modified intermediate tables were accepted')
+    except ValueError as error:assert str(error)=='legacy_table_hash_mismatch'
+    xml.write_text(body.replace('2026-2027','2025-2026'),encoding='utf-8');meta['doc_tables_sha256']=hashlib.sha256(xml.read_bytes()).hexdigest();assert p['extract_document'](meta)['status']=='document_date_requires_review'
+print('PASS: legacy table proof, professional-field whitelist, checksum mismatch rejection and old roster hold')

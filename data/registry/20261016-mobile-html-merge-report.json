@@ -1,0 +1,8 @@
+{
+  "preparedAt": "2026-10-16T16:34:40.563Z",
+  "originalCheckpoints": 23603,
+  "retriedCheckpoints": 26,
+  "previousStatus": "staff_format_needs_review",
+  "completeRetryPass": true,
+  "method": "Only previously unresolved identity/format checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+}
