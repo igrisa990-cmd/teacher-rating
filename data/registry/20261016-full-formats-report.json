@@ -1,0 +1,21 @@
+{
+  "startedAt": "2026-10-16T20:01:57.808Z",
+  "finishedAt": "2026-10-16T20:16:57.559Z",
+  "inventory": 1247,
+  "completed": 1247,
+  "requests": 6632,
+  "bytes": 470983976,
+  "outcomes": {
+    "staff_format_needs_review": 1096,
+    "prepared": 65,
+    "The operation was aborted": 69,
+    "page_too_large": 1,
+    "non_public_address": 9,
+    "aborted": 1,
+    "Hostname/IP does not match certificate's altnames: Host: xn--213-5cd3cgu2f.xn--p1ai. is not in the cert's altnames: DNS:*.timeweb.ru, DNS:timeweb.ru": 1,
+    "school_identity_needs_review": 5
+  },
+  "schoolsWithTeachers": 65,
+  "teachers": 984,
+  "completeInventoryPass": true
+}

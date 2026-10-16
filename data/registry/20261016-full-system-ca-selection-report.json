@@ -1,0 +1,5 @@
+{
+  "preparedAt": "2026-10-16T20:26:03.972Z",
+  "inventory": 199,
+  "scope": "Every remaining empty current-license source with an issuer-chain error. Uses the pre-existing operating-system trusted CA store; no trust-store changes or certificate-validation overrides. Expired certificates, hostname failures and access restrictions are not selected."
+}

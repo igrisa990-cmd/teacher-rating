@@ -1,4 +1,4 @@
-const fs=require('fs'),path=require('path'),os=require('os'),assert=require('assert/strict'),{merge,transientNetworkCheckpoint}=require('../scripts/merge-staff-retry.cjs');
+const fs=require('fs'),path=require('path'),os=require('os'),assert=require('assert/strict'),{merge,transientNetworkCheckpoint,networkCheckpoint,systemTrustCheckpoint}=require('../scripts/merge-staff-retry.cjs');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'staff-retry-')),previousRoot=path.join(tmp,'previous'),retryRoot=path.join(tmp,'retry'),root=path.join(tmp,'merged');for(const d of [previousRoot,retryRoot])fs.mkdirSync(path.join(d,'schools'),{recursive:true});
 const write=(dir,id,record)=>fs.writeFileSync(path.join(dir,'schools',id+'.json'),JSON.stringify({ogrn:id,registryWebsite:'https://school.example/',checkedAt:'2026-10-16',...record}));
 write(previousRoot,'1',{status:'school_identity_needs_review',rows:[]});write(previousRoot,'2',{status:'prepared',rows:[{name:'Иванова Анна Петровна'}]});write(retryRoot,'1',{status:'prepared',rows:[{name:'Петрова Анна Петровна'}]});
@@ -11,3 +11,10 @@ write(previousRoot,'1',{status:'The operation was aborted',identityMethod:'expli
 merge({previousRoot,retryRoot,root:path.join(tmp,'network'),expectedStatus:'transient_network_error'});assert.equal(fs.readFileSync(path.join(tmp,'network/schools/2.json'),'utf8'),established);
 write(previousRoot,'1',{status:'robots_disallow',identityMethod:'explicit_ogrn',rows:[]});assert.throws(()=>merge({previousRoot,retryRoot,root:path.join(tmp,'restricted'),expectedStatus:'transient_network_error'}),/ineligible checkpoint/);
 console.log('PASS: only empty identity-verified transient failures can be replaced; restrictions and established rosters are preserved');
+for(const status of ['aborted','non_public_address','network_error','http_500'])assert(networkCheckpoint({status,rows:[]}));
+for(const status of ['http_403','http_429','robots_disallow','certificate has expired','school_identity_needs_review','prepared'])assert(!networkCheckpoint({status,rows:[]}));
+assert(!networkCheckpoint({status:'aborted',rows:[{}]}));
+write(previousRoot,'1',{status:'non_public_address',rows:[]});merge({previousRoot,retryRoot,root:path.join(tmp,'dns'),expectedStatus:'transient_or_dns_error'});assert.equal(fs.readFileSync(path.join(tmp,'dns/schools/2.json'),'utf8'),established);
+console.log('PASS: DNS/transient retry can re-check empty sources without relaxing TLS, robots, access restrictions or prior rosters');
+assert(systemTrustCheckpoint({status:'unable to verify the first certificate',rows:[]}));assert(systemTrustCheckpoint({status:'self-signed certificate in certificate chain',rows:[]}));for(const status of ['certificate has expired','Hostname/IP does not match certificate','http_403','robots_disallow'])assert(!systemTrustCheckpoint({status,rows:[]}));assert(!systemTrustCheckpoint({status:'unable to verify the first certificate',rows:[{}]}));
+write(previousRoot,'1',{status:'unable to verify the first certificate',rows:[]});merge({previousRoot,retryRoot,root:path.join(tmp,'system-ca'),expectedStatus:'system_certificate_store'});assert.equal(fs.readFileSync(path.join(tmp,'system-ca/schools/2.json'),'utf8'),established);

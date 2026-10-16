@@ -1,5 +1,13 @@
-const assert=require('assert/strict'),{safeUrl,publicAddress,verifyIdentity,parseRobots,robotsAllowed,candidates}=require('../scripts/collect-national-staff.cjs'),{parseGoswebStaff,subjectFromRole,normalizeSubject}=require('../scripts/parse-school-staff.cjs');
+const assert=require('assert/strict'),{safeUrl,publicAddress,verifyIdentity,parseRobots,robotsAllowed,candidates,officialMove}=require('../scripts/collect-national-staff.cjs'),{parseGoswebStaff,subjectFromRole,normalizeSubject}=require('../scripts/parse-school-staff.cjs');
 assert.throws(()=>safeUrl('http://127.0.0.1/test'));assert.throws(()=>safeUrl('https://user:pass@school.example/'));assert.throws(()=>safeUrl('file:///tmp/private'));assert(!publicAddress('10.0.0.2'));assert(!publicAddress('fc00::1'));assert(publicAddress('1.1.1.1'));
+assert(!publicAddress('ff02::1'),'multicast addresses are not public school sources');
+assert.equal(officialMove('<a href="https://new-school.example/">Новый официальный сайт</a>','https://old-school.example/'),'https://new-school.example/');
+assert.equal(officialMove('<a href="https://other.example/">Наши партнёры</a>','https://old-school.example/'),null);
+assert.equal(officialMove('<a href="http://127.0.0.1/">Сайт переехал</a>','https://old-school.example/'),null);
+assert.equal(officialMove('<a href="https://one.example/">Сайт переехал</a><a href="https://two.example/">Новый официальный сайт</a>','https://old-school.example/'),null);
+assert(candidates('<a href="/school/teachers/">Педагоги</a>','https://school.example/','staff').length===1);
+assert(candidates('<a href="/staff/">Летний лагерь</a>','https://school.example/','staff').length===0);
+const rosterLinks=candidates('<a href="/svedeniya/pedagogicheskiy-sostav/noform-pedagogicheskiy-sostav_57.html">Иванова Анна</a><a href="/svedeniya/pedagogicheskiy-sostav/">Педагогический состав</a>','https://school.example/','staff');assert(rosterLinks[0].url.endsWith('/pedagogicheskiy-sostav/'),'a profile carousel cannot outrank the staff roster');
 const rules=parseRobots('User-agent: *\nDisallow: /private\nAllow: /private/staff$');assert(!robotsAllowed(rules,'https://school.example/private/file'));assert(robotsAllowed(rules,'https://school.example/private/staff'));assert(robotsAllowed(rules,'https://school.example/sveden/common'));
 const seed={ogrn:'1020300977620',name:'Муниципальная общеобразовательная школа № 1',city:'Москва',address:'125000, г. Москва, ул. Тестовая, дом 1'};
 assert.equal(verifyIdentity('<p>Основной государственный регистрационный номер: 1020300977620</p>',seed),'explicit_ogrn');

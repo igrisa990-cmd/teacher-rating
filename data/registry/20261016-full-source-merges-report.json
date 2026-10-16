@@ -1,0 +1,45 @@
+{
+  "method": "All completed retry passes are overlaid only onto eligible empty checkpoints. Every earlier established roster is preserved. Original check dates and response evidence remain unchanged.",
+  "passes": [
+    {
+      "preparedAt": "2026-10-16T20:23:35.388Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 10144,
+      "previousStatus": "transient_or_dns_error",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-16T20:23:53.968Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 762,
+      "previousStatus": "staff_link_not_found",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-16T20:24:13.127Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 1247,
+      "previousStatus": "staff_format_needs_review",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-16T20:26:32.040Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 199,
+      "previousStatus": "system_certificate_store",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-16T20:30:26.471Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 125,
+      "previousStatus": "staff_format_needs_review",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    }
+  ]
+}
