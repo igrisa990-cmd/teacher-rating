@@ -20,8 +20,8 @@ def header_map(rows):
             full=[i for i,c in enumerate(cells) if re.search(r'(?:^| )(?:фио|ф и о)(?: |$)',c) or ('фамили' in c and 'имя' in c)]
             split=[next((i for i,c in enumerate(cells) if c==word),None) for word in ('фамилия','имя','отчество')]
             names=full[:1] if len(full)==1 else split if all(i is not None for i in split) and len(set(split))==3 else []
-            roles=[i for i,c in enumerate(cells) if 'должност' in c and 'соответств' not in c]
-            subjects=[i for i,c in enumerate(cells) if ('преподава' in c and ('предмет' in c or 'дисциплин' in c))]
+            roles=[i for i,c in enumerate(cells) if re.match(r'^(?:занимаемая |наименование )?должност',c)]
+            subjects=[i for i,c in enumerate(cells) if i not in roles and ('преподава' in c and ('предмет' in c or 'дисциплин' in c))]
             if names and len(roles)==1 and roles[0] not in names:
                 return {'name':names,'role':roles[0],'subject':subjects[0] if len(subjects)==1 else None,'columns':count},index+depth
     return None,0
@@ -98,6 +98,22 @@ def extract_document(meta):
             if mapping: tables.extend(table_people(rows[start:],mapping))
             else: partial=True
         workbook.close()
+    elif meta['format']=='xls':
+        import xlrd
+        # Parse cell values only. No Excel automation, formulas, links or macros execute.
+        workbook=xlrd.open_workbook(str(file),on_demand=True)
+        try:
+            if workbook.nsheets>10: raise ValueError('worksheet_limit')
+            for index in range(workbook.nsheets):
+                sheet=workbook.sheet_by_index(index)
+                if sheet.nrows>3000 or sheet.ncols>60: raise ValueError('worksheet_size_limit')
+                rows=[[clean(v) for v in sheet.row_values(i)] for i in range(sheet.nrows)]
+                title+=' '.join(' '.join(r) for r in rows[:4])[:1000]
+                mapping,start=header_map(rows)
+                if mapping: tables.extend(table_people(rows[start:],mapping))
+                else: partial=True
+                workbook.unload_sheet(index)
+        finally: workbook.release_resources()
     if not current_date_evidence(meta,title[:2000]): return {'status':'document_date_requires_review','rows':[]}
     unique={}
     for person in tables:
@@ -112,10 +128,10 @@ def process_one(args):
     meta_file,output=args;meta=json.loads(meta_file.read_text(encoding='utf-8'));target=output/meta_file.name
     if target.exists():
         saved=json.loads(target.read_text(encoding='utf-8'))
-        if saved.get('documentParserVersion',0)>=3 or saved.get('documentParserVersion',0)>=2 and saved['status']!='table_format_requires_review':return saved
+        if saved.get('documentParserVersion',0)>=4 or saved.get('documentParserVersion',0)>=2 and saved['status']!='table_format_requires_review':return saved
     try: parsed=extract_document(meta)
     except Exception as e: parsed={'status':type(e).__name__+': '+str(e)[:160],'rows':[]}
-    result={**meta,**parsed,'documentParserVersion':3};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
+    result={**meta,**parsed,'documentParserVersion':4};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--root',default='work/staff-documents-20261016');parser.add_argument('--workers',type=int,default=3);args=parser.parse_args()

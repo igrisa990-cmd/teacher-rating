@@ -1,0 +1,14 @@
+{
+  "run": "20261016-staff-expanded",
+  "snapshot_rows": 1464,
+  "inserted": 1464,
+  "metadata_refreshed": 1464,
+  "linked_existing": 0,
+  "unmatched_schools": 0,
+  "ambiguous_names": 0,
+  "active_teachers": 56419,
+  "active_schools": 41662,
+  "schools_with_teachers": 2123,
+  "orphan_teachers": 0,
+  "database_bytes": 482569363
+}
