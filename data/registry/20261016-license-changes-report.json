@@ -1,0 +1,15 @@
+{
+  "preparedAt": "2026-10-16T07:10:55.671Z",
+  "source": {
+    "source": "https://islod.obrnadzor.gov.ru/opendata-lic/data-20261015-structure-20150421.zip",
+    "downloadedAt": "2026-10-16T07:07:26.396Z",
+    "bytes": 93474611,
+    "sha256": "43fbf1aaea5f2fdcd4242cceb4715ebf06158a539233b2b787d9f63ee5339fec"
+  },
+  "fullRows": 37637,
+  "eligible": 77,
+  "newRows": 1,
+  "processedSha256": "6a76e52067516042b12a36c68efe857ba7dbe29ae567f95f731e255489a3077b",
+  "gzipSha256": "b9a2122af2de748c33e2f02eb5e76fd525e3840adad6902eb2f77a99c21ef36c",
+  "method": "New or materially changed published source records only. Timestamp-only differences are excluded; existing audit snapshots remain intact."
+}

@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-16T07:14:03.665Z",
+  "finishedAt": "2026-10-16T07:19:07.074Z",
+  "inventory": 1279,
+  "completed": 1279,
+  "requests": 1554,
+  "bytes": 281959076,
+  "outcomes": {
+    "downloaded": 1099,
+    "robots_disallow": 59,
+    "The operation was aborted": 60,
+    "non_public_address": 14,
+    "cross_origin_redirect": 31,
+    "file_too_large": 4,
+    "http_404": 10,
+    "aborted": 2
+  }
+}

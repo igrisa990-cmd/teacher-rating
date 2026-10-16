@@ -1,0 +1,12 @@
+{
+  "source": "https://islod.obrnadzor.gov.ru/opendata-lic/data-20261015-structure-20150421.zip",
+  "archiveSha256": "43fbf1aaea5f2fdcd4242cceb4715ebf06158a539233b2b787d9f63ee5339fec",
+  "checkedAt": "2026-10-16T07:40:38.461Z",
+  "currentEligibleOrganizations": 37637,
+  "eligibleKeyMd5": "6b9cb48865e45b48678c9fbcde220c9a",
+  "newSchools": 1,
+  "updatedSchools": 76,
+  "previouslyEligibleInactiveOrganizations": 6,
+  "matchedInactiveLicenseRecords": 14,
+  "method": "Every license traversed. All license records for the six previously eligible organizations are explicitly inactive; profiles, reviews and archive state are preserved. No inference from mere absence. Current source rows can restore active status only with a non-older snapshot and check time."
+}
