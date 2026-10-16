@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-10-16T14:34:07.092Z",
+  "finishedAt": "2026-10-16T14:46:16.620Z",
+  "inventory": 6829,
+  "completed": 6829,
+  "requests": 21373,
+  "bytes": 937146326,
+  "outcomes": {
+    "school_identity_needs_review": 6408,
+    "http_404": 1,
+    "non_public_address": 109,
+    "prepared": 47,
+    "aborted": 30,
+    "http_500": 3,
+    "The operation was aborted": 206,
+    "certificate has expired": 1,
+    "staff_format_needs_review": 9,
+    "redirect_limit": 2,
+    "staff_link_not_found": 1,
+    "http_503": 2,
+    "Client network socket disconnected before secure TLS connection was established": 3,
+    "network_error": 1,
+    "socket hang up": 3,
+    "http_421": 1,
+    "http_502": 2
+  },
+  "schoolsWithTeachers": 47,
+  "teachers": 1208,
+  "completeInventoryPass": true
+}

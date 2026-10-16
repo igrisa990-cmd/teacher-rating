@@ -1,0 +1,14 @@
+{
+  "documents": 1116,
+  "processed": 1116,
+  "teachers": 2902,
+  "outcomes": {
+    "document_date_requires_review": 772,
+    "table_format_requires_review": 138,
+    "prepared": 94,
+    "prepared_partial": 73,
+    "ValueError: scanned_document_requires_review": 29,
+    "ValueError: document_page_limit": 9,
+    "ValueError: worksheet_size_limit": 1
+  }
+}

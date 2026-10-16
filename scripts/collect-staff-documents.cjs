@@ -5,7 +5,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function collect({input='work/staff-document-review.ndjson',root='work/staff-documents-20261016',workers=12,maxSchools=Infinity,includeUndated=false}={}){
  if(!Number.isInteger(workers)||workers<1||workers>16)throw Error('Use 1–16 workers');
  const seeds=new Map(fs.readFileSync('work/accreditation-xml/staff-seeds.ndjson','utf8').trim().split('\n').map(JSON.parse).map(s=>[s.ogrn,s]));
- const groups=new Map();for(const d of fs.readFileSync(input,'utf8').trim().split('\n').map(JSON.parse).filter(d=>(d.status==='current_year_candidate'||includeUndated&&d.status==='date_requires_review')&&['pdf','docx','xlsx'].includes(d.format))){const u=safeUrl(d.url),identity=safeUrl(d.identity_url);if(u.origin!==identity.origin||!seeds.has(d.school_ogrn))continue;const group=groups.get(u.origin)||[];group.push(d);groups.set(u.origin,group)}
+ const groups=new Map();for(const d of fs.readFileSync(input,'utf8').trim().split('\n').map(JSON.parse).filter(d=>(d.status==='current_year_candidate'||includeUndated&&d.status==='date_requires_review')&&['pdf','docx','xlsx','xls'].includes(d.format))){const u=safeUrl(d.url),identity=safeUrl(d.identity_url);if(u.origin!==identity.origin||!seeds.has(d.school_ogrn))continue;const group=groups.get(u.origin)||[];group.push(d);groups.set(u.origin,group)}
  const queue=[...groups.values()].slice(0,maxSchools),inventory=queue.reduce((n,g)=>n+g.length,0);fs.mkdirSync(path.join(root,'files'),{recursive:true});fs.mkdirSync(path.join(root,'documents'),{recursive:true});
  const resolver=new dns.Resolver({timeout:2500,tries:1}),startedAt=new Date().toISOString();let completed=0,requests=0,bytes=0;
  async function originBatch(docs){const origin=new URL(docs[0].url).origin,dnsCache=new Map();let blocked=false,groups;
@@ -28,10 +28,10 @@ async function collect({input='work/staff-document-review.ndjson',root='work/sta
    try{if(setupError)throw Error(setupError);let identity=identityCache.get(d.identity_url+'|'+d.school_ogrn);
     if(!identity){const p=await fetchChecked(d.identity_url);if(!/html|text\/plain/.test(p.type))throw Error('identity_not_html');const charset=(p.type+' '+p.buffer.subarray(0,3000).toString('latin1')).match(/charset\s*=\s*["']?([\w-]+)/i)?.[1]||'utf-8';let html;try{html=new TextDecoder(charset.replace(/^cp1251$/i,'windows-1251')).decode(p.buffer)}catch{html=p.buffer.toString('utf8')}
      const method=verifyIdentity(html,seeds.get(d.school_ogrn));if(!method)throw Error('school_identity_needs_review');identity={url:p.url,method,sha256:sha(p.buffer)};identityCache.set(d.identity_url+'|'+d.school_ogrn,identity)}
-    const p=await fetchChecked(d.url);if(d.format==='pdf'&&!p.buffer.subarray(0,1024).includes(Buffer.from('%PDF-')))throw Error('not_pdf');if(d.format!=='pdf'&&p.buffer.readUInt32LE(0)!==0x04034b50)throw Error('not_ooxml');
+    const p=await fetchChecked(d.url);if(d.format==='pdf'&&!p.buffer.subarray(0,1024).includes(Buffer.from('%PDF-')))throw Error('not_pdf');if(d.format==='xls'&&!p.buffer.subarray(0,8).equals(Buffer.from('d0cf11e0a1b11ae1','hex')))throw Error('not_xls');if(['docx','xlsx'].includes(d.format)&&(p.buffer.length<4||p.buffer.readUInt32LE(0)!==0x04034b50))throw Error('not_ooxml');
     result.file=path.join(root,'files',key+'.'+d.format);result.sha256=sha(p.buffer);result.source_url=p.url;result.identity_url=identity.url;result.identity_method=identity.method;result.identity_sha256=identity.sha256;result.status='downloaded';fs.writeFileSync(result.file,p.buffer);
    }catch(e){result.status=e.message||'network_error'}
-   fs.writeFileSync(target,JSON.stringify(result));completed++;
+   fs.writeFileSync(target+'.tmp',JSON.stringify(result));fs.renameSync(target+'.tmp',target);completed++;
   }
  }
  const timer=setInterval(()=>console.log(JSON.stringify({completed,inventory,requests,megabytes:Math.round(bytes/1e6)})),15000);
