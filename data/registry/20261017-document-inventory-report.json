@@ -1,0 +1,25 @@
+{
+  "preparedAt": "2026-10-17T07:54:17.501Z",
+  "selectedSchools": 1722,
+  "inspectedSchools": 1722,
+  "identityProofUnavailable": 75,
+  "staffProofUnavailable": 0,
+  "provenPages": 5925,
+  "documentLinks": 1543,
+  "documentSchools": 534,
+  "formats": {
+    "xls": 12,
+    "doc": 57,
+    "docx": 234,
+    "pdf": 1184,
+    "xlsx": 56
+  },
+  "outcomes": {
+    "date_requires_review": 982,
+    "legacy_binary_word": 57,
+    "explicitly_older_document": 254,
+    "current_year_candidate": 250
+  },
+  "completeInventoryPass": true,
+  "scope": "All licensed empty staff-format checkpoints, using original identity and page response checksums. Links are same-origin and explicitly describe personnel; date/layout/teaching-role checks remain required before import."
+}

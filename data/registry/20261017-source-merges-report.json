@@ -1,0 +1,44 @@
+{
+  "completedAt": "2026-10-17T09:01:09.478Z",
+  "operations": [
+    {
+      "preparedAt": "2026-10-17T07:56:42.183Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 41,
+      "previousStatus": "staff_format_needs_review",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-17T08:25:31.141Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 721,
+      "previousStatus": "staff_link_not_found",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-17T08:25:42.594Z",
+      "validatedDocuments": 20,
+      "schools": 10,
+      "teacherRows": 169,
+      "method": "Separate inventory copy; original HTML checks retained. Deduplicate full names within an organization, merge only explicit published subjects, then apply the existing current-license and cross-organization duplicate-roster guards."
+    },
+    {
+      "preparedAt": "2026-10-17T08:26:01.141Z",
+      "originalCheckpoints": 7113,
+      "retriedCheckpoints": 6,
+      "previousStatus": "staff_format_needs_review",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    },
+    {
+      "preparedAt": "2026-10-17T08:27:23.734Z",
+      "originalCheckpoints": 23603,
+      "retriedCheckpoints": 7113,
+      "previousStatus": "school_identity_needs_review",
+      "completeRetryPass": true,
+      "method": "Only the selected unresolved checkpoints without staff rows are replaced by freshly checked registry-linked sources. Every established HTML/document roster and its original check date is preserved. Full license, association and duplicate-roster validation follows before staging."
+    }
+  ]
+}

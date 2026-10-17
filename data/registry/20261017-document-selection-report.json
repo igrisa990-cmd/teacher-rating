@@ -1,0 +1,7 @@
+{
+  "inventory": 1543,
+  "selectedLinks": 1543,
+  "excludedLinksForNewHtmlRosters": 0,
+  "schools": 534,
+  "method": "Retain new checksum-proven HTML rosters; download documents only for schools still without teacher rows."
+}

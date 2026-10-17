@@ -1,0 +1,8 @@
+const assert=require('assert/strict'),{parsePublicStaff}=require('../scripts/parse-school-staff.cjs'),options={schoolOgrn:'1020300977620',sourceUrl:'https://school.example/roster',checkedAt:'2026-10-17T08:00:00Z'};
+const card=(name,role)=>`<article class="card teacher-card h-100"><img alt="Фото человека"><div class="teacher-card__body"><p class="teacher-card__position">${role}</p><h3 class="teacher-card__name">${name}</h3></div><a class="teacher-card__reviews">Отзывы: 9</a><a href="mailto:contact@example.invalid">contact@example.invalid</a></article>`;
+const parsed=parsePublicStaff(card('Иванова Анна Петровна','учитель начальных классов')+card('Петрова Мария Ивановна','Учитель математики')+card('Сидорова Елена Петровна','Воспитатель'),options);
+assert.deepEqual(parsed.rows.map(r=>[r.name,r.subject]),[['Иванова Анна Петровна','Начальные классы'],['Петрова Мария Ивановна','Математика']]);assert(!JSON.stringify(parsed.rows).includes('contact@'));assert(!JSON.stringify(parsed.rows).includes('Отзывы'));
+assert.equal(parsePublicStaff('<article class="teacher-card"><h3 class="teacher-card__name">Иванова Анна Петровна</h3><h3 class="teacher-card__name">Петрова Мария Ивановна</h3><p class="teacher-card__position">Учитель</p></article>',options).rows.length,0);
+assert.equal(parsePublicStaff('<article class="teacher-card"><h3 class="teacher-card__name">Иванова Анна Петровна</h3></article><p class="teacher-card__position">Учитель</p>',options).rows.length,0);
+assert.equal(parsePublicStaff(card('Иванова Анна Петровна','Квалификация: учитель математики'),options).rows.length,0);
+console.log('PASS: exact teacher-card fields, same-person association, no borrowed roles, qualification or review/contact imports');

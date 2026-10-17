@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-10-17T07:56:20.326Z",
+  "finishedAt": "2026-10-17T08:05:16.831Z",
+  "inventory": 1289,
+  "completed": 1289,
+  "requests": 1364,
+  "bytes": 214929176,
+  "outcomes": {
+    "The operation was aborted": 117,
+    "robots_disallow": 43,
+    "downloaded": 608,
+    "non_public_address": 380,
+    "aborted": 120,
+    "cross_origin_redirect": 14,
+    "http_404": 3,
+    "Client network socket disconnected before secure TLS connection was established": 1,
+    "certificate has expired": 3
+  }
+}

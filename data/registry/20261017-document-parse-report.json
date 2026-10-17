@@ -1,0 +1,15 @@
+{
+  "documents": 608,
+  "processed": 608,
+  "teachers": 240,
+  "outcomes": {
+    "document_date_requires_review": 497,
+    "table_format_requires_review": 53,
+    "prepared_partial": 8,
+    "ValueError: worksheet_size_limit": 1,
+    "ValueError: document_page_limit": 5,
+    "ValueError: scanned_document_requires_review": 31,
+    "prepared": 12,
+    "ValueError: legacy_reader_required": 1
+  }
+}
