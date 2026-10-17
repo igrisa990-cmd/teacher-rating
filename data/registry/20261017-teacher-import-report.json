@@ -1,0 +1,23 @@
+{
+  "run": "20261017-staff-expansion",
+  "inserted": 8179,
+  "snapshot_rows": 8179,
+  "active_teachers": 73550,
+  "ambiguous_names": 0,
+  "linked_existing": 0,
+  "unmatched_schools": 0,
+  "metadata_refreshed": 8179,
+  "active_schools": 41662,
+  "database_bytes": 519122067,
+  "run_applied_at": "2026-10-17T08:55:01.071621+00:00",
+  "orphan_teachers": 0,
+  "schools_with_teachers": 2999,
+  "new_school_rosters": 360,
+  "network_organizations_rechecked": 7834,
+  "cached_review_organizations": 1722,
+  "unknown_subjects_new": 3319,
+  "normalized_subject_fields": 49,
+  "unchanged_earlier_source_identities": 65335,
+  "delta_sha256": "6e8cad0897d59bb55abec75b8015d29ec25f71e565a3a995a9efb139c4a95cdd",
+  "canonical_source_sha256": "f18c4cba2d337945d3f70099fe49c7dea0fcc25517a271d9e07b8e0f20359e27"
+}

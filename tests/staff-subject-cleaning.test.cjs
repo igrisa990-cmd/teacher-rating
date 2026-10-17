@@ -2,5 +2,18 @@ const assert=require('assert/strict'),{cleanPublishedSubject,subjectFromRole}=re
 assert.equal(cleanPublishedSubject('Начальные классы высшей квалификационной категории'),'Начальные классы');assert.equal(cleanPublishedSubject('Музыка/категория высшая'),'Музыка');assert.equal(cleanPublishedSubject('Химия, выс. квалиф. категория'),'Химия');assert.equal(cleanPublishedSubject('Биология, высшая категория; Биология; География, первая категория'),'Биология; География');
 assert.equal(cleanPublishedSubject('Начальные классы. (персональные данные, в том числе фотография, размещены с согласия субъекта персональных данных)'),'Начальные классы');
 for(const subject of ['Первая помощь','Теория категорий','Защита персональных данных'])assert.equal(cleanPublishedSubject(subject),subject);
+for(const subject of ['Теория высших категорий','Высшая математика','Организация высшего образования'])assert.equal(cleanPublishedSubject(subject,{fromRole:true}),subject);
+assert.equal(cleanPublishedSubject('Математика (высшая квалификационная категория)'),'Математика');
+assert.equal(cleanPublishedSubject('Начальные классы; высшая категория'),'Начальные классы');
+assert.equal(cleanPublishedSubject('Русский язык квалификационная категория: первая'),'Русский язык');
+assert.equal(cleanPublishedSubject('Биология (дано согласие на обработку персональных данных)'),'Биология');
+assert.equal(cleanPublishedSubject('высшей категории/учитель Физическая культура',{fromRole:true}),'Физическая культура');
+assert.equal(cleanPublishedSubject('1 категории / Учитель калмыцкого языка',{fromRole:true}),'калмыцкого языка');
+assert.equal(cleanPublishedSubject('История, высшее образование, без категории',{fromRole:true}),'История');
+assert.equal(cleanPublishedSubject('Математика высшего образования, без категории, воспитатель ГКП',{fromRole:true}),'Математика');
+assert.equal(cleanPublishedSubject('Музыка, ИЗО, тьютер Английский язык, среднее профессиональное образование, без категории',{fromRole:true}),'Музыка, ИЗО');
+assert.equal(cleanPublishedSubject('Начальные классы/"Почетный работник общего образования РФ"/ I квалификационная категория',{fromRole:true}),'Начальные классы');
+assert.equal(cleanPublishedSubject('иностранного языка, учитель 1-й категории',{fromRole:true}),'иностранного языка');
+assert.equal(cleanPublishedSubject('История, высшее образование'),'История, высшее образование','only teaching-position provenance permits removal of education/job clauses');
 assert.equal(subjectFromRole('Учитель математики высшей категории'),'Математика');
 console.log('PASS: explicit qualification/consent suffixes removed, published subjects and legitimate discipline names retained');

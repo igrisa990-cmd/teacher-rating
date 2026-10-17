@@ -1,0 +1,12 @@
+{
+  "preparedAt": "2026-10-17T07:53:27.187Z",
+  "inspectedReviewSchools": 1722,
+  "identityProofUnavailable": 75,
+  "staffProofUnavailable": 1,
+  "unresolvedFormats": 1605,
+  "inventory": 41,
+  "completed": 41,
+  "teachers": 1125,
+  "completeInventoryPass": true,
+  "method": "All current-license empty format-review checkpoints are audited. Only sources whose cached UTF-8 bytes match original response checksums and whose organization identity re-validates are emitted. Original checkedAt times and source hashes are retained; this is a cache re-read, not a fresh fetch."
+}
