@@ -1,0 +1,13 @@
+{
+  "completedAt": "2026-10-17T10:21:26.256Z",
+  "canonicalizedCheckpoints": 16,
+  "sourceTeachers": 78835,
+  "deltaRows": 5321,
+  "newSchoolRosters": 373,
+  "unknownSubjects": 143,
+  "subjectFlags": 0,
+  "normalizedSubjectFields": 19,
+  "unchangedEarlierIdentities": 73514,
+  "canonicalSourceSha256": "9115ccbd5e36e693d4ab9e2564a56ca15108451ef63a0ccf257d9c32589473e1",
+  "deltaSha256": "5af31d5412b770adb322c0614229d6be968da3e254d546052876d6e6bfea6f4c"
+}

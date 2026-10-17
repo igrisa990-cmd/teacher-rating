@@ -1,0 +1,17 @@
+# Netcat school staff recovery, 17 October 2026
+
+Run `20261017-staff-netcat` added **5,321 teachers from 373 additional school rosters**. Production queries confirm **78,871 active teachers, 41,662 schools and 3,372 schools with teacher records**. There are zero unmatched schools, ambiguous names, links to existing people or orphan school associations. The new source records cover 33 regions.
+
+The complete licensed empty format-review inventory contained 2650 school checkpoints. It was re-read against checksum-proven cached HTML; this pass made no new network requests. 373 rosters yielded 5321 teacher rows. 90 identity proofs and 1 staff proofs were unavailable, and 2186 formats remain unresolved. Original check times are retained. These counts describe this source queue, not national personnel coverage.
+
+The Netcat/Gosweb staff-list template uses object-item cards inside tpl-component-gw-staff, with one owned object-info block. The parser requires exactly one name and one position field, and at most one discipline field in that same card. Generic cards, nested or ambiguous people, qualifications, photographs and contact fields cannot supply identity or teaching roles. Only explicit classroom teachers are eligible. 143 new subjects remain empty because no published subject was available.
+
+Cache recovery now selects a single source row for each person. Explicit discipline fields outrank subjects stated in teaching positions, which outrank missing subjects. A fuller roster replaces a brief homepage record together with its own URL, provenance and SHA256; subjects from different pages are never unioned under one source hash. 398 richer source selections were made. Within-page duplicate fields retain their published provenance. Every one of the 5321 new rows was independently re-read from 400 exact hash-proven HTML pages, including its name, subject and provenance.
+
+The merged root preserves all 23,603 original organization checkpoints. All 73,514 earlier canonical source identities and every stored field were retained exactly. Current-license, organization association, cross-school duplicate-roster and professional-field guards passed. The delta contains only new identities; no material updates to earlier records were staged. 19 new subject fields required additional normalization. Full source SHA256: `9115ccbd5e36e693d4ab9e2564a56ca15108451ef63a0ccf257d9c32589473e1`. Delta SHA256: `5af31d5412b770adb322c0614229d6be968da3e254d546052876d6e6bfea6f4c`.
+
+Only the delta was staged privately and applied once through the existing SECURITY INVOKER importer after row-count, unique-key, checksum, school-match and existing-name checks. Anonymous and authenticated execution remains revoked. No schema, Auth, RLS, moderator, SMTP or SMS settings changed.
+
+Eight relevant suites passed: Netcat cards, cache proofs/source selection, DOM associations, national staff, teacher cards, subject cleanup, retry preservation and snapshot completeness. The production mobile catalog was checked for a newly imported teacher, updated total, source link, no search suggestions, no horizontal overflow and no console errors.
+
+Only code, tests and aggregate reports are published. Personnel archives, HTML pages, document files and checkpoints stay local and ignored. Unresolved identities, inaccessible sites and unsupported formats still limit national coverage; a published source does not guarantee present employment.

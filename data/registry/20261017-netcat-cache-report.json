@@ -1,0 +1,13 @@
+{
+  "preparedAt": "2026-10-17T10:13:01.827Z",
+  "inspectedReviewSchools": 2650,
+  "identityProofUnavailable": 90,
+  "staffProofUnavailable": 1,
+  "unresolvedFormats": 2186,
+  "richerSourceSelections": 398,
+  "inventory": 373,
+  "completed": 373,
+  "teachers": 5321,
+  "completeInventoryPass": true,
+  "method": "All selected current-license empty format-review checkpoints are audited. Only sources whose cached UTF-8 bytes match original response checksums and whose organization identity re-validates are emitted. Each person retains a single source row: explicit disciplines outrank teaching-position subjects, which outrank unpublished subjects. Subjects from different pages are never unioned under one source hash. Original checkedAt times and source hashes are retained; this is a cache re-read, not a fresh fetch."
+}

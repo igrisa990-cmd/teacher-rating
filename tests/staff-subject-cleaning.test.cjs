@@ -16,4 +16,6 @@ assert.equal(cleanPublishedSubject('Начальные классы/"Почет�
 assert.equal(cleanPublishedSubject('иностранного языка, учитель 1-й категории',{fromRole:true}),'иностранного языка');
 assert.equal(cleanPublishedSubject('История, высшее образование'),'История, высшее образование','only teaching-position provenance permits removal of education/job clauses');
 assert.equal(subjectFromRole('Учитель математики высшей категории'),'Математика');
+assert.equal(cleanPublishedSubject('Математика (без категории) (служебная пометка)'),'Математика');
+assert.equal(cleanPublishedSubject('Химия (без квалификационной категории)'),'Химия');
 console.log('PASS: explicit qualification/consent suffixes removed, published subjects and legitimate discipline names retained');
