@@ -1,0 +1,11 @@
+{
+  "preparedAt": "2026-10-17T10:21:26.232Z",
+  "source": "Registry-linked official school websites, checked against current official organization identity",
+  "fullRows": 78835,
+  "eligible": 5321,
+  "teachers": 5321,
+  "newRows": 5321,
+  "processedSha256": "5af31d5412b770adb322c0614229d6be968da3e254d546052876d6e6bfea6f4c",
+  "gzipSha256": "8b873f15c0e68402e1ea411896bbed99c19acaf15baa6e45e5b557c9dfa465d0",
+  "method": "New or materially changed published source records only. Timestamp-only differences are excluded; existing audit snapshots remain intact."
+}

@@ -4,7 +4,7 @@ if(process.env.NODE_TLS_REJECT_UNAUTHORIZED==='0')throw Error('Source checks req
 const {parseStaff,parseGoswebStaff,parsePublicStaff,blocks}=require('./parse-school-staff.cjs'),{text,validOgrn}=require('./import-russian-schools.cjs');
 const resolver=new dns.Resolver({timeout:2500,tries:1});
 function pinnedFetch(url,addresses){return new Promise((resolve,reject)=>{const client=require(url.protocol==='https:'?'https':'http');const q=client.get(url,{signal:AbortSignal.timeout(9000),headers:{'User-Agent':AGENT+' (public school directory; professional names and subjects only)','Accept':'text/html,text/plain;q=0.9'},lookup:(host,options,callback)=>{const a=addresses.find(r=>r.family===4)||addresses[0];options.all?callback(null,addresses):callback(null,a.address,a.family)}},response=>resolve({status:response.statusCode,ok:response.statusCode>=200&&response.statusCode<300,headers:{get:key=>response.headers[key]||null},body:response}));q.on('error',reject)})}
-const STAFF_PARSER_VERSION=5;
+const STAFF_PARSER_VERSION=6;
 const AGENT='TeacherRating-Catalog/3.0',hash=s=>crypto.createHash('sha256').update(s).digest('hex');
 const normalize=s=>String(s||'').normalize('NFKC').toLocaleLowerCase('ru').replaceAll('ё','е').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
 function publicAddress(address){if(address.startsWith('::ffff:'))return publicAddress(address.slice(7));if(net.isIPv4(address)){const [a,b]=address.split('.').map(Number);return a!==0&&a!==10&&a!==127&&a<224&&!(a===169&&b===254)&&!(a===172&&b>=16&&b<=31)&&!(a===192&&b===168)&&!(a===100&&b>=64&&b<=127)&&!(a===198&&(b===18||b===19));}return net.isIPv6(address)&&!/^::$|^::1$|^f[cd]|^fe[89ab]|^ff/i.test(address)}
