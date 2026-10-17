@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-16T20:26:03.998Z",
+  "finishedAt": "2026-10-16T20:26:20.967Z",
+  "inventory": 199,
+  "completed": 199,
+  "requests": 233,
+  "bytes": 67,
+  "outcomes": {
+    "self-signed certificate in certificate chain": 21,
+    "unable to verify the first certificate; if the root CA is installed locally, try running Node.js with --use-system-ca": 161,
+    "non_public_address": 1,
+    "self-signed certificate; if the root CA is installed locally, try running Node.js with --use-system-ca": 15,
+    "The operation was aborted": 1
+  },
+  "schoolsWithTeachers": 0,
+  "teachers": 0,
+  "completeInventoryPass": true
+}

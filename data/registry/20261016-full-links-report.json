@@ -1,0 +1,20 @@
+{
+  "startedAt": "2026-10-16T19:53:59.445Z",
+  "finishedAt": "2026-10-16T19:58:29.200Z",
+  "inventory": 762,
+  "completed": 762,
+  "requests": 1272,
+  "bytes": 77814358,
+  "outcomes": {
+    "staff_link_not_found": 703,
+    "staff_format_needs_review": 37,
+    "prepared": 4,
+    "The operation was aborted": 14,
+    "Client network socket disconnected before secure TLS connection was established": 2,
+    "aborted": 1,
+    "http_403": 1
+  },
+  "schoolsWithTeachers": 4,
+  "teachers": 9,
+  "completeInventoryPass": true
+}
