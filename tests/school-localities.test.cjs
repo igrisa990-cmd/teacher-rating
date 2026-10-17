@@ -1,0 +1,12 @@
+const assert=require('assert/strict'),{explicitRegion,explicitSettlement}=require('../scripts/parse-school-localities.cjs');
+assert.equal(explicitRegion('426076, РЕСПУБЛИКА УДМУРТСКАЯ, Г. ИЖЕВСК, УЛ. КАРЛА ЛИБКНЕХТА, Д.17'),'Удмуртская Республика');
+assert.equal(explicitRegion('РЕСПУБЛИКА КАБАРДИНО-БАЛКАРСКАЯ, г. Терек'),'Кабардино-Балкарская Республика');
+assert.equal(explicitSettlement('671191, Республика Бурятия, Селенгинский район, улус Зурган-Дэбэ, ул.Школьная 2','Республика Бурятия'),'Зурган-Дэбэ');
+assert.equal(explicitSettlement('353620, Краснодарский край, Щербиновский р-н, Старощербиновская ст-ца, Лермонтова ул, 37','Краснодарский край'),'Старощербиновская');
+assert.equal(explicitSettlement('Республика Башкортостан, городское поселение г. Учалы, переулок Школьный, 6','Республика Башкортостан'),'Учалы');
+assert.equal(explicitSettlement('Псковская область, Струго-Красненский район, м. Владимирский Лагерь','Псковская область'),'Владимирский Лагерь');
+assert.equal(explicitSettlement('Томская область, Томский район, село Томское улица Маяковского 2','Томская область'),'Томское');
+assert.equal(explicitSettlement('Чеченская Республика, Надтеречный район, с.п. Знаменское, ул. Московская, 20','Чеченская Республика'),'','A rural municipality label alone does not establish the village');
+assert.equal(explicitSettlement('Тульская область, городской округ Алексин, ул. Мира, 1','Тульская область'),'');
+assert.equal(explicitSettlement('Карачаево-Черкесская Республика, м.р-н Зеленчукский, с.п. Сторожевское, г-к Сторожевая-2, ул.Горная, зд.8А','Карачаево-Черкесская Республика'),'');
+console.log('PASS: reversed republic names, explicit prefix/suffix settlements, full street separation and municipality-only rejection');
