@@ -1,6 +1,12 @@
 {
   "preparedAt": "2026-10-17T20:05:48.302Z",
-  "publicationStatus": "blocked_connection_not_applied",
+  "publicationStatus": "database_applied",
+  "appliedAt": "2026-10-18T08:58:20.749305Z",
+  "importRun": "20261017-school-campuses",
+  "appliedCorrections": 35,
+  "canonicalRedirects": 34,
+  "teacherMappingUnchanged": true,
+  "orphanTeachersAfterApply": 0,
   "checkpointRecordsAudited": 23603,
   "sourcePagesInspected": 8446,
   "sourcePagesUnavailable": 3606,
@@ -21,6 +27,7 @@
     "digest": "6ffe025c5d3d4b67d1751ebcd1f903ab"
   },
   "licenseCoverage": {
+    "sourceSnapshotDate": "2026-10-15",
     "sourceLicenseRecords": 39661,
     "matchedLicenseRecords": 37671,
     "unmatchedRecords": 1990,

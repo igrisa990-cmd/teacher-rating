@@ -2,6 +2,7 @@ const fs=require('fs'),vm=require('vm'),assert=require('assert/strict');const co
 const run=code=>vm.runInContext(code,context);run(`globalThis.school={region:'Москва',campus_summary:[{name:'Корпус № 99',kind:'school',address:'улица Первая 1',region:'Москва',source_url:'javascript:alert(1)'},{name:'Филиал',kind:'branch',address:'улица Вторая 2',region:'Московская область'},{name:'Детский сад',kind:'preschool',address:'улица Третья 3',region:'Москва'}]}`);
 assert.equal(run("campusSearchMatches(school,'99').length"),1);assert.equal(run("campusSearchMatches(school,'999').length"),0);assert.equal(run("campusSource('javascript:alert(1)')"),null);
 const html=run('campusSection(school)');assert(html.includes('Москва <span>· 1'));assert(html.includes('Московская область <span>· 1'));assert(!html.includes('javascript:'));assert(html.includes('Дошкольное отделение'));
+assert(html.indexOf('Москва <span>')<html.indexOf('Московская область <span>'),'Organization region appears first');assert(!html.includes('class="sectionHead"'),'Campus headings must not trigger legacy catalog-add controls');
 assert(!run("campusCard({name:'<img src=x onerror=alert(1)>',address:'<script>',kind:'education_place'})").includes('<img'));assert(run("campusSection({})").includes('пока не подтверждены'));
 assert.equal(run("campusAddressCount([{address:'Улица Первая, 1'},{address:'улица Первая 1'}])"),1);
 run(`schoolProfileAliases.set('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb')`);

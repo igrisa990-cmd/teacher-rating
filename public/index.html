@@ -567,8 +567,8 @@ async function publishTeacherRatingSection(id,section){if(state.teacherRatingSav
 <script src="/search-assistant.js"></script>
 <link rel="stylesheet" href="/mobile-experience.css">
 <script src="/mobile-experience.js"></script>
-<link rel="stylesheet" href="/school-campuses.css">
-<script src="/school-campuses.js"></script>
+<link rel="stylesheet" href="/school-campuses.css?v=20261018">
+<script src="/school-campuses.js?v=20261018"></script>
 <script>
 document.documentElement.dataset.theme=localStorage.getItem('theme')||'light';$('#themeBtn').textContent=document.documentElement.dataset.theme==='dark'?'☀':'☾';
 window.addEventListener('hashchange',render);window.addEventListener('popstate',render);document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideSuggest()}if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='/'&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();($('#homeSearch')||$('#rateSearchInput')||$('#teacherHubSearch')||$('#teacherFilterInput')||$('#schoolFilterInput')||$('#globalSearch'))?.focus()}});document.addEventListener('click',e=>{if(!e.target.closest('.search')&&!e.target.closest('.heroSearch')&&!e.target.closest('.focusSearch')&&!e.target.closest('.unifiedSearch'))hideSuggest()});new MutationObserver(()=>requestAnimationFrame(injectGuideBanner)).observe($('#app'),{childList:true,subtree:false});loadData();
