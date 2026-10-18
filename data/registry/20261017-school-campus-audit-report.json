@@ -1,0 +1,40 @@
+{
+  "preparedAt": "2026-10-17T20:05:48.302Z",
+  "publicationStatus": "database_applied",
+  "appliedAt": "2026-10-18T08:58:20.749305Z",
+  "importRun": "20261017-school-campuses",
+  "appliedCorrections": 35,
+  "canonicalRedirects": 34,
+  "teacherMappingUnchanged": true,
+  "orphanTeachersAfterApply": 0,
+  "checkpointRecordsAudited": 23603,
+  "sourcePagesInspected": 8446,
+  "sourcePagesUnavailable": 3606,
+  "campusOrganizations": 321,
+  "verifiedCampusAddresses": 1742,
+  "campusKinds": {
+    "education_place": 743,
+    "school": 634,
+    "preschool": 364,
+    "branch": 1
+  },
+  "matchedActiveOrganizations": 321,
+  "mapProfilesAudited": 3930,
+  "emptyDuplicateProfiles": 34,
+  "emptyNonSchoolMapProfiles": 1,
+  "teacherBaseline": {
+    "rows": 79085,
+    "digest": "6ffe025c5d3d4b67d1751ebcd1f903ab"
+  },
+  "licenseCoverage": {
+    "sourceSnapshotDate": "2026-10-15",
+    "sourceLicenseRecords": 39661,
+    "matchedLicenseRecords": 37671,
+    "unmatchedRecords": 1990,
+    "nonSchoolClassifier": 845,
+    "invalidOrganizationOgrn": 83,
+    "schoolAddressReview": 1062
+  },
+  "payloadSha256": "c0193b8617d41c76f0f248dd116e4f9745e65f3f89da49d889bc98a4ddc0629a",
+  "completeNationalCoverage": false
+}
