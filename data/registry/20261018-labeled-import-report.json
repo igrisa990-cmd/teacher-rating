@@ -1,0 +1,19 @@
+{
+  "schoolRun": "20261018-corroborated-address-schools",
+  "staffRun": "20261018-staff-labeled-fields",
+  "addedSchools": 60,
+  "addedTeachers": 309,
+  "activeSchools": 42199,
+  "activeTeachers": 79859,
+  "totalTeacherRows": 80073,
+  "schoolsWithTeachers": 3448,
+  "orphanTeachers": 0,
+  "duplicateActiveOrganizationOgrns": 0,
+  "importedSchoolFieldMismatches": 0,
+  "importedTeacherFieldMismatches": 0,
+  "priorTeacherRecordsPreserved": 79764,
+  "priorSourceRecordsPreserved": 79514,
+  "heldSchoolAddresses": 490,
+  "heldMapIdentityMatches": 1,
+  "personnelArchivesPublished": false
+}

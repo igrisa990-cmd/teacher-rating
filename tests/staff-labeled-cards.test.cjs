@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),{parsePublicStaff}=require('../scripts/parse-school-staff.cjs');
+const options={schoolOgrn:'1020300977620',sourceUrl:'https://school.example/info/pedsostav',checkedAt:'2026-10-17T11:00:00Z'},name='Иванова Анна Петровна';
+const field=(label,value)=>`<div class="flex items-start gap-x-2"><div class="flex flex-col gap-y-1 text-sm"><span class="font-medium">${label}</span><span>${value}</span></div></div>`;
+const card=(person,fields,bio='Учитель химии, private@example.invalid +79991234567')=>`<div class="m-4 flex flex-col gap-6 @container @2xl:flex-row"><span>Фото не импортируется</span><div class="flex flex-col gap-y-4 @5xl:gap-y-8 w-full"><div class="@sm:mx-auto @2xl:mx-0"><h3 class="text-xl font-medium w-fit">${person}</h3></div><div class="grid gap-y-3 @5xl:grid-cols-3">${fields}</div><div class="prose-combined">${bio}</div></div></div>`;
+const read=h=>parsePublicStaff(h,options).rows;
+let rows=read(card(name,field('Должность','Учитель физической культуры')));assert.equal(rows.length,1);assert.equal(rows[0].subject,'Физическая культура');assert.equal(rows[0].subject_evidence,'published_teaching_position');assert(!JSON.stringify(rows).includes('private@'));assert(!JSON.stringify(rows).includes('хими'));
+rows=read(card(name,field('Должность','Учитель')));assert.equal(rows[0].subject,'');assert.equal(rows[0].subject_evidence,'not_published');
+rows=read(card(name,field('Должность','Учитель')+field('Преподаваемые предметы','Биология')));assert.equal(rows[0].subject,'Биология');assert.equal(rows[0].subject_evidence,'explicit_discipline');
+assert.equal(read(card(name,field('Должность','Директор МБОУ/учитель русского языка и литературы')))[0].subject,'Русский язык и Литература');
+assert.equal(read(card(name,field('Должность','Квалификация / учитель математики'))).length,0);
+for(const fields of [field('Квалификация','Учитель физики'),field('Должность','Директор'),field('Должность','Воспитатель детского сада'),field('Должность','Учитель-логопед'),field('Должность','Учитель')+field('Должность','Директор'),field('Должность','Учитель')+field('Предметы','Химия')+field('Предметы','Биология')])assert.equal(read(card(name,fields)).length,0);
+assert.equal(read(card(name,field('Должность','Учитель')).replace('</h3>',`</h3><h3 class="font-medium w-fit">Петрова Мария Ивановна</h3>`)).length,0);
+assert.equal(read(card(name,'')+card('Петрова Мария Ивановна',field('Должность','Учитель математики'))).length,1,'Sibling roles cannot be borrowed');
+assert.equal(read(card(name,field('Должность','Директор'),card('Петрова Мария Ивановна',field('Должность','Учитель математики')))).length,1,'Nested cards keep their own name and position');
+assert.equal(read(card(name,field('Должность','Учитель')+field('Предметы','private@example.invalid'))).length,0);
+assert(rows.every(r=>r.source_url===options.sourceUrl&&r.checked_at===options.checkedAt));
+console.log('PASS: owned labeled roster fields, separate biography, explicit discipline provenance, no sibling/nested/qualification borrowing, ambiguous cards held');

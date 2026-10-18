@@ -1,0 +1,52 @@
+{
+  "preparedAt": "2026-10-18T15:21:49.806Z",
+  "source": "https://islod.obrnadzor.gov.ru/opendata-lic/data-20261017-structure-20150421.zip",
+  "sourceArchiveSha256": "bff7219977ac62fb7ee29801b848641dc3a0b5e96b790ce3a17de78baaa2d928",
+  "inspectedActiveGeneralLicenseRecords": 39655,
+  "preparedMissingOrganizations": 61,
+  "regions": [
+    "Архангельская область",
+    "Забайкальский край",
+    "Иркутская область",
+    "Кабардино-Балкарская Республика",
+    "Карачаево-Черкесская Республика",
+    "Кемеровская область — Кузбасс",
+    "Краснодарский край",
+    "Мурманская область",
+    "Новосибирская область",
+    "Пензенская область",
+    "Пермский край",
+    "Республика Башкортостан",
+    "Республика Дагестан",
+    "Тверская область",
+    "Удмуртская Республика",
+    "Чеченская Республика"
+  ],
+  "held": {
+    "unresolved_explicit_address": 490,
+    "non_school_classifier": 844,
+    "invalid_organization_ogrn": 83
+  },
+  "sha256": "0d939907016daa3e6ec2f3828087874609f2df7ea46032323cf8e6ff369b7ee1",
+  "method": "Active current main-organization general programs, valid organization OGRN and explicitly named settlement/region only. No municipality-only inference, no existing organization updates, no staff changes. Map profile matches require a separate database preflight.",
+  "reviewedForImport": 60,
+  "mapIdentityReviewHeld": 1,
+  "reviewedSha256": "a72029db1a5dae7481b752d05aa245cab22abdc6006a552cbf9f46a729c00f3b",
+  "sourceAudit": {
+    "checkedAt": "2026-10-18T15:27:08.510Z",
+    "rows": 60,
+    "abbreviatedRegionsCorroboratedByIssuer": 27,
+    "fullAddressRegions": 33,
+    "reviewedSha256": "a72029db1a5dae7481b752d05aa245cab22abdc6006a552cbf9f46a729c00f3b",
+    "exactLicenseAndAddressFields": true,
+    "method": "Every reviewed row re-read from its exact active license record; full address region or explicit abbreviation confirmed by the named regional issuer; physical locality labels only."
+  },
+  "publicationStatus": "database_applied",
+  "run": "20261018-corroborated-address-schools",
+  "appliedAt": "2026-10-18T15:28:13.655295Z",
+  "insertedSchools": 60,
+  "existingOrganizationsUpdated": 0,
+  "mapProfilesAttached": 0,
+  "stagedPayloadMd5": "437d4ca11e4b570f07a1f23cbd341679",
+  "completeNationalCoverage": false
+}
