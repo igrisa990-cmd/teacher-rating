@@ -1,0 +1,19 @@
+{
+  "schoolRun": "20261018-compact-address-schools",
+  "staffRun": "20261018-staff-roster-templates",
+  "addedSchools": 181,
+  "addedTeachers": 679,
+  "activeSchools": 42139,
+  "activeTeachers": 79550,
+  "totalTeacherRows": 79764,
+  "schoolsWithTeachers": 3413,
+  "orphanTeachers": 0,
+  "duplicateActiveOrganizationOgrns": 0,
+  "importedSchoolFieldMismatches": 0,
+  "importedTeacherFieldMismatches": 0,
+  "priorTeacherRecordsPreserved": 79085,
+  "priorSourceRecordsPreserved": 78835,
+  "heldSchoolAddresses": 550,
+  "heldMapIdentityMatches": 1,
+  "personnelArchivesPublished": false
+}

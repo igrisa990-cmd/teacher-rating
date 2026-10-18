@@ -27,6 +27,29 @@ function extract(html){
   if(names.length!==1||roles.length!==1||subjects.length>1||new Set([...names,...roles,...subjects]).size!==names.length+roles.length+subjects.length)continue;
   add(plain(names[0]),plain(roles[0]),subjects.length?plain(subjects[0]):'');
  }
+ // Read only the dedicated name/position fields of these published roster templates.
+ // Education, qualifications, biographies and contact paragraphs cannot supply a teaching role.
+ function owned(card,node,isCard){for(let p=node.parentNode;p&&p!==card;p=p.parentNode)if(isCard(p))return false;return true}
+ for(const card of nodes.filter(n=>hasClass(n,'staff-card'))){
+  const children=card.childNodes||[],names=children.filter(n=>n.tagName==='h3'),roles=children.filter(n=>n.tagName==='p');
+  if(names.length===1&&roles.length===1&&!within(card,'staff-card').some(n=>n!==card))add(plain(names[0]),plain(roles[0]),'');
+ }
+ for(const card of nodes.filter(n=>hasClass(n,'row')&&hasClass(n,'my-4'))){
+  const isCard=n=>hasClass(n,'row')&&hasClass(n,'my-4'),headings=within(card,'my-3').filter(n=>n.tagName==='h5'&&owned(card,n,isCard));
+  if(headings.length!==1)continue;const head=headings[0],names=within(head,'text-accent').filter(n=>n.tagName==='a'),roles=within(head,'text-muted').filter(n=>n.tagName==='span'&&hasClass(n,'small'));
+  if(names.length===1&&roles.length===1)add(plain(names[0]),plain(roles[0]),'');
+ }
+ for(const [kind,nameField,roleField] of [['position-photo-about-area','fio_blk','position-area'],['gs_team_popup_details','gs-member-name','gs-member-desig']]){
+  for(const card of nodes.filter(n=>hasClass(n,kind))){
+   const own=n=>owned(card,n,n=>hasClass(n,kind)),names=within(card,nameField).filter(own),roles=within(card,roleField).filter(own);
+   if(names.length!==1||roles.length!==1)continue;
+   let subject='';if(kind==='gs_team_popup_details'){
+    const fields=nodes.filter(n=>prop(n).includes('teachingdiscipline')&&own(n)&&(()=>{for(let p=n.parentNode;p;p=p.parentNode)if(p===card)return true;return false})());
+    if(fields.length>1)continue;if(fields.length===1)subject=plain(fields[0]).replace(/^(?:препода[её]т учебные предметы|преподаваемые (?:учебные )?(?:предметы|дисциплины))\s*:\s*/iu,'');
+   }
+   add(plain(names[0]),plain(roles[0]),subject);
+  }
+ }
  for(const table of nodes.filter(n=>n.tagName==='table')){const lines=nodes.filter(n=>n.tagName==='tr'&&belongs(n,table));if(lines.length>1500)continue;const grid=[];let invalid=false;
   for(let r=0;r<lines.length;r++){grid[r]||=[];let col=0;for(const cell of(lines[r].childNodes||[]).filter(n=>['td','th'].includes(n.tagName))){while(grid[r][col]!==undefined)col++;const attrs=Object.fromEntries((cell.attrs||[]).map(a=>[a.name,a.value])),height=Number(attrs.rowspan||1),width=Number(attrs.colspan||1);if(!Number.isInteger(height)||!Number.isInteger(width)||height<1||height>100||width<1||col+width>60){invalid=true;break}const value=plain(cell);for(let y=r;y<Math.min(lines.length,r+height);y++){grid[y]||=[];for(let x=col;x<col+width;x++){if(grid[y][x]!==undefined){invalid=true;break}grid[y][x]=value}}col+=width}if(invalid)break}if(invalid)continue;
   let mapping,start;for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){const block=grid.slice(r,r+depth);if(block.length!==depth)continue;const count=Math.max(...block.map(row=>row.length)),headers=Array.from({length:count},(_,i)=>normalize(block.map(row=>row[i]||'').join(' '))),full=headers.map((h,i)=>(/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))?i:-1).filter(i=>i>=0),split=['фамилия','имя','отчество'].map(word=>headers.indexOf(word)),names=full.length===1?full:split.every(i=>i>=0)&&new Set(split).size===3?split:[],roles=headers.map((h,i)=>/^(?:занимаемая |наименование )?должност/.test(h)?i:-1).filter(i=>i>=0),subjects=headers.map((h,i)=>!roles.includes(i)&&/преподава/.test(h)&&/предмет|дисциплин/.test(h)?i:-1).filter(i=>i>=0);if(names.length&&roles.length===1&&!names.includes(roles[0])){if(depth<3&&!subjects.length&&headers.some(h=>/преподава/.test(h))&&normalize(grid[r+depth]?.[names[0]])===normalize(grid[r]?.[names[0]]))continue;mapping={names,role:roles[0],subject:subjects.length===1?subjects[0]:null,count};start=r+depth;break}}
