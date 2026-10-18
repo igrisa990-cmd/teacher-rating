@@ -1,0 +1,39 @@
+{
+  "verifiedOn": "2026-10-18",
+  "timingsAreIndividualChecks": true,
+  "apiChecks": [
+    {
+      "case": "empty Moscow browse",
+      "status": 200,
+      "milliseconds": 987,
+      "resultCount": 21
+    },
+    {
+      "case": "Yaroslavl school 99",
+      "status": 200,
+      "milliseconds": 235,
+      "resultCount": 1
+    },
+    {
+      "case": "school 548 campus region",
+      "status": 200,
+      "milliseconds": 224,
+      "resultCount": 1
+    },
+    {
+      "case": "new teacher lowercase prefix",
+      "status": 200,
+      "milliseconds": 1185,
+      "resultCount": 1
+    }
+  ],
+  "sourceRlsPreserved": true,
+  "securityInvokerPreserved": true,
+  "requestTimeoutSeconds": 8,
+  "newSecurityAdvisorFindings": 0,
+  "mobile": {
+    "clientWidth": 360,
+    "scrollWidth": 360,
+    "teacherFound": true
+  }
+}
