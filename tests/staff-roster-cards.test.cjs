@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),{parsePublicStaff}=require('../scripts/parse-school-staff.cjs');
+const options={schoolOgrn:'1020300977620',sourceUrl:'https://school.example/sveden/employees',checkedAt:'2026-10-17T10:00:00Z'},name='Иванова Анна Петровна';
+const read=html=>parsePublicStaff(html,options).rows;
+let rows=read(`<a class="staff-card"><h3>${name}</h3><p>Учитель математики</p><img alt="Учитель химии"></a>`);assert.equal(rows[0].subject,'Математика');assert.equal(rows[0].subject_evidence,'published_teaching_position');
+assert.equal(read(`<a class="staff-card"><h3>${name}</h3><p>Педагог-психолог</p><p>Учитель физики</p></a>`).length,0);
+const oshkole=(n,role)=>`<div class="row my-4"><div class="col-md-9"><h5 class="my-3"><a class="text-accent">${n}</a><span class="small text-muted">${role}</span></h5><p>Образование: учитель химии private@example.invalid +79991234567</p></div></div>`;
+rows=read(oshkole(name,'Учитель русского языка и литературы'));assert.equal(rows.length,1);assert(!JSON.stringify(rows).includes('private@'));assert(!JSON.stringify(rows).includes('хими'));assert(rows[0].subject.includes('Русский язык'));
+assert.equal(read(oshkole(name,'Директор')).length,0);assert.equal(read(oshkole(name,'Учитель').replace('</h5>','<span class="small text-muted">Воспитатель</span></h5>')).length,0);
+const position=(n,role)=>`<div class="position-photo-about-area"><p class="position-area">${role}</p><p class="fio_blk">${n}</p><p>Образование: учитель физики</p></div>`;
+rows=read(position(name,'Учитель'));assert.equal(rows[0].subject,'');assert.equal(rows[0].subject_evidence,'not_published');assert.equal(read(position(name,'Логопед')).length,0);
+assert.equal(read(position(name,'Директор').replace('</div>',position('Петрова Мария Ивановна','Учитель математики')+'</div>')).length,1,'A nested card cannot lend its teaching role to the director');
+const gs=(n,role,subject)=>`<div class="gs_team_popup_details"><h2 class="gs-member-name">${n}</h2><div class="gs-member-desig" itemprop="jobTitle">${role}</div><div itemprop="description"><div itemprop="fio"></div><div itemprop="teachingDiscipline">Преподает учебные предметы: ${subject}</div><div itemprop="qualification">учитель биологии</div></div></div>`;
+rows=read(gs(name,'Учитель','Химия'));assert.equal(rows[0].subject,'Химия');assert.equal(rows[0].subject_evidence,'explicit_discipline');assert.equal(read(gs(name,'Медицинская сестра','Химия')).length,0);
+assert.equal(read(gs(name,'Учитель','Химия').replace('</h2>',`</h2><h2 class="gs-member-name">Петрова Мария Ивановна</h2>`)).length,0);
+for(const html of [position(name,'Учитель-логопед'),gs(name,'Учитель','private@example.invalid'),oshkole(name,'Квалификация: учитель химии')])assert.equal(read(html).length,0);
+assert(rows.every(r=>r.source_url===options.sourceUrl&&r.checked_at===options.checkedAt));
+console.log('PASS: four owned roster templates, explicit position/discipline provenance, no biography/contact/qualification inference or nested-person role borrowing');

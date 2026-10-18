@@ -1,0 +1,49 @@
+{
+  "preparedAt": "2026-10-18T14:37:04.721Z",
+  "source": "Registry-linked official school rosters with proven source bytes and organization identity",
+  "teachers": 679,
+  "newRows": 679,
+  "newSchoolRosters": 41,
+  "unknownSubjects": 179,
+  "subjectReviewHeld": 0,
+  "duplicateRosterOrganizationsHeld": 0,
+  "unchangedEarlierSourceRecords": 78835,
+  "canonicalSourceRows": 79514,
+  "canonicalSourceSha256": "5a8d510cfee7a02043b941254a92481cecffff0110166c72229ed1baf39cbe25",
+  "processedSha256": "78ebfc55a9eaa044e3f49361167ebaaf9e584e87ccf08b372d11fbc824a3f3e7",
+  "gzipSha256": "706aed97a62a77c0c1e8236d239d7a90178121cd106fe9709d00c27e51befd22",
+  "completeInventoryPass": true,
+  "inventoryScope": "All 47 selected current-license empty checkpoints with newly supported templates reviewed; 41 rosters source-verified. This is a bounded additions batch, not a complete national census.",
+  "checkDatesPreserved": true,
+  "selection": {
+    "selectedAt": "2026-10-18T14:34:48.730Z",
+    "selectedSchools": 47,
+    "reviewInventoryInspected": 2278,
+    "verifiedPagesWithTeacherLabels": 819,
+    "selection": "Current-license empty format-review checkpoints with the four newly supported dedicated roster templates. Source bytes, school identity and teaching fields are revalidated before output."
+  },
+  "sourceAudit": {
+    "checkedAt": "2026-10-18T14:36:03.037Z",
+    "verifiedRows": 679,
+    "distinctSourcePages": 42,
+    "regions": 5,
+    "regionCounts": {
+      "Волгоградская область": 406,
+      "Ростовская область": 8,
+      "Санкт-Петербург": 74,
+      "Республика Коми": 5,
+      "Республика Крым": 186
+    },
+    "sourceBytesAndFieldsMatch": true,
+    "method": "Each new teacher name, subject and provenance was independently re-read from its exact URL and SHA256-proven HTML bytes. No multi-page subject unions are accepted."
+  },
+  "publicationStatus": "database_applied",
+  "run": "20261018-staff-roster-templates",
+  "appliedAt": "2026-10-18T14:39:20.386673Z",
+  "insertedTeachers": 679,
+  "existingIdentitiesLinked": 0,
+  "ambiguousNames": 0,
+  "unmatchedSchools": 0,
+  "stagedPayloadMd5": "cdac0514e1465fadffd867efe8385c7e",
+  "completeNationalCoverage": false
+}
