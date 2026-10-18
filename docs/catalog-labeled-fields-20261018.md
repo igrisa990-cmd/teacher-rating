@@ -1,6 +1,6 @@
 # Labeled staff fields and corroborated school addresses
 
-The live catalog gained 60 schools and 309 teachers from 35 additional rosters. Totals are 42,199 active schools, 79,859 active teachers and 3,448 schools with teachers. Existing private import functions were used without schema or authentication changes.
+The live catalog gained 60 schools and 309 teachers from 35 additional rosters. Totals are 42,199 active schools, 79,859 active teachers and 3,448 schools with teachers. Existing private import functions were used for both batches. Authentication was unchanged.
 
 The new staff reader recognizes the dedicated name heading and labeled position/discipline grid within one owned card. Biography sections cannot supply a name, role or subject. Director/teacher positions separated by a slash are accepted only when the explicit position field itself names the classroom teaching job. Ambiguous fields, nested-person role borrowing, qualifications, contacts and support roles remain excluded. Of 51 selected current-license empty checkpoints, 35 produced proven rosters and 16 remained unresolved. Every one of the 309 additions was independently re-read from 39 exact SHA256-proven source pages. 109 subjects were unpublished and stay empty; original source dates are retained.
 
@@ -13,3 +13,7 @@ Both runs completed once: `20261018-corroborated-address-schools` at 2026-10-18T
 New teacher payload SHA256: `95c6e90e57953661cedfb665ac40fdbb9265e51849b02fc596f56502fce8e264`. The canonical local source has 79,823 records, SHA256 `35000d357747cfc3c48c25222728a31e5ce19495dc09fb7ade48c16f5ac77aa4`.
 
 Only parser code, tests and aggregate reports are published. Raw personnel, source pages, canonical snapshots and staging stay under ignored `work/`. The full national school, campus and teacher catalog remains incomplete.
+
+Mobile verification found a separate search timeout through the public API. Updating planner statistics alone did not resolve it. Migration `20261018154426_catalog_region_index_candidates.sql` materializes the caller-visible regional school ID array, allowing the existing teacher school index to narrow candidates before text matching. Migration `20261018154833_catalog_point_lookup_results.sql` browses the existing school cache, indexes campus-region membership and hydrates only the selected page through source-row point lookups. This avoids a hash join over every wide teacher row even when the page contains only schools. The function remains SECURITY INVOKER with the same RLS policies, campus filters, ranking, spelling fallback and eight-second request budget.
+
+Local regression cases cover case-insensitive prefixes, spelling, region/city isolation, empty browsing, and additional source-school RLS. Four sequential public API checks passed: empty Moscow browsing (987 ms), school 99 in Yaroslavl region (235 ms), school 548 through its Moscow-region campus (224 ms), and the new teacher's lowercase prefix (1,185 ms). These are individual verification timings, not a performance benchmark. The newly imported teacher was also found in the mobile catalog without horizontal overflow. Security advisors reported no new findings.
