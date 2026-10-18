@@ -1,0 +1,54 @@
+{
+  "addedTeachers": 1521,
+  "affectedSchools": 140,
+  "regions": 2,
+  "distinctSourcePages": 1502,
+  "unpublishedSubjects": 1501,
+  "activeSchools": 42199,
+  "activeTeachers": 83636,
+  "totalTeacherRows": 83850,
+  "schoolsWithTeachers": 3679,
+  "orphanTeachers": 0,
+  "duplicateActiveOrganizationOgrns": 0,
+  "importedFieldMismatches": 0,
+  "priorTeacherRowsPreserved": 82329,
+  "priorSourceRowsPreserved": 82079,
+  "canonicalSourceRows": 83600,
+  "canonicalSourceSha256": "f6171637438c0bfae3e9c62de00a68732bd98377f19643ead7d0fda89e5379d2",
+  "retainedCheckpoints": 23603,
+  "reviewSites": 19925,
+  "personnelArchivesPublished": false,
+  "apiChecks": [
+    {
+      "label": "empty Moscow browse",
+      "status": 200,
+      "milliseconds": 6745,
+      "count": 21
+    },
+    {
+      "label": "first batch lowercase prefix",
+      "status": 200,
+      "milliseconds": 779,
+      "count": 1
+    },
+    {
+      "label": "new section batch lowercase name",
+      "status": 200,
+      "milliseconds": 397,
+      "count": 1
+    }
+  ],
+  "mobile": {
+    "clientWidth": 375,
+    "scrollWidth": 375,
+    "newTeacherFound": true
+  },
+  "run": {
+    "run": "20261018-staff-tatar-sections",
+    "inserted": 1521,
+    "appliedAt": "2026-10-18 17:40:55.896536+00",
+    "payloadSha256": "d6e473e84e1bf1515e0de32f0083a3ba38d90b2939c87915b67580ca5ebee4c9",
+    "stagedMd5": "42e7f519584c821a21e66348f4653d48",
+    "linkedExisting": 0
+  }
+}

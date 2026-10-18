@@ -1,0 +1,70 @@
+{
+  "preparedAt": "2026-10-18T17:38:52.628Z",
+  "source": "Registry-linked official school websites, matched to current licensed organizations",
+  "collection": {
+    "startedAt": "2026-10-18T17:16:02.229Z",
+    "finishedAt": "2026-10-18T17:37:27.784Z",
+    "inventory": 496,
+    "completed": 496,
+    "requests": 5739,
+    "bytes": 445083079,
+    "outcomes": {
+      "staff_format_needs_review": 337,
+      "prepared": 135,
+      "The operation was aborted": 15,
+      "school_identity_needs_review": 1,
+      "socket hang up": 3,
+      "http_404": 3,
+      "http_502": 1,
+      "partial_staff_pages": 1
+    },
+    "schoolsWithTeachers": 136,
+    "teachers": 1436,
+    "completeInventoryPass": true
+  },
+  "cacheReview": {
+    "preparedAt": "2026-10-18T17:37:37.556Z",
+    "inventory": 496,
+    "completed": 496,
+    "completeInventoryPass": true,
+    "identityProofMissing": 7,
+    "sourcePagesMissing": 0,
+    "schoolPathHeld": 11,
+    "rosters": 139,
+    "teachers": 1501,
+    "ambiguousNamesHeld": 0
+  },
+  "independentTeachingColumnCohort": {
+    "preparedAt": "2026-10-18T17:29:18.110Z",
+    "inventory": 1,
+    "completed": 1,
+    "completeInventoryPass": true,
+    "identityProofMissing": 0,
+    "sourcePagesMissing": 0,
+    "schoolPathHeld": 0,
+    "rosters": 1,
+    "teachers": 20,
+    "ambiguousNamesHeld": 0
+  },
+  "verifiedRows": 1521,
+  "verifiedSchoolIdentities": 140,
+  "distinctSourcePages": 1502,
+  "regions": 2,
+  "regionCounts": {
+    "Республика Саха (Якутия)": 20,
+    "Республика Татарстан": 1501
+  },
+  "sourceBytesAndFieldsMatch": true,
+  "newTeachers": 1521,
+  "newSchoolRosters": 140,
+  "unpublishedSubjects": 1501,
+  "duplicateRosterOrganizationsHeld": 0,
+  "unchangedEarlierSourceRecords": 82079,
+  "canonicalSourceRows": 83600,
+  "canonicalSourceSha256": "f6171637438c0bfae3e9c62de00a68732bd98377f19643ead7d0fda89e5379d2",
+  "payloadSha256": "d6e473e84e1bf1515e0de32f0083a3ba38d90b2939c87915b67580ca5ebee4c9",
+  "scope": "Complete 496-school shared-platform teacher-section pass plus the independently selected teaching-column cache cohort; existing canonical identities remain unchanged.",
+  "checkDatesPreserved": true,
+  "nationalCoverageComplete": false,
+  "personnelArchivesPublished": false
+}

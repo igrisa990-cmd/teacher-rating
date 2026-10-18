@@ -67,6 +67,17 @@ function extract(html){
   }
   if(roles.length===1&&subjects.length<=1){const role=roles[0].replace(/^((?:директор|заместитель директора|зам[.]\s*директора)[^/]{0,100})\s*\/\s*(?=учитель(?:\s|[-(]|$))/iu,'$1, ');add(plain(names[0]),role,subjects[0]||'')}
  }
+ // The portal's main profile job precedes its training and career sections.
+ // A training "Предмет" or diploma specialization cannot become a taught subject.
+ for(const card of nodes.filter(n=>(n.attrs||[]).some(a=>a.name==='id'&&a.value==='school_data'))){
+  const children=(card.childNodes||[]).filter(n=>n.tagName),names=children.filter(n=>n.tagName==='h1');if(names.length!==1)continue;
+  const roles=[],subjects=[];for(const field of children){if(/^h[2-6]$/.test(field.tagName))break;if(field.tagName!=='div')continue;
+   const cells=(field.childNodes||[]).filter(n=>n.tagName);if(cells.length!==2||cells[0].tagName!=='strong'||cells[1].tagName!=='p')continue;
+   const label=normalize(plain(cells[0]));if(label==='должность')roles.push(plain(cells[1]));
+   if(/^(?:преподаваемые учебные предметы|преподаваемые предметы|преподаваемые дисциплины)$/.test(label))subjects.push(plain(cells[1]));
+  }
+  if(roles.length===1&&subjects.length<=1)add(plain(names[0]),roles[0],subjects[0]||'');
+ }
  // Responsive Gosweb profiles publish two dedicated headers for the same person.
  // Accept only one top/content pair whose owned names and positions agree.
  for(const card of nodes.filter(n=>hasClass(n,'gw-employee-info'))){
@@ -103,6 +114,14 @@ function extract(html){
  for(const table of nodes.filter(n=>n.tagName==='table')){const lines=nodes.filter(n=>n.tagName==='tr'&&belongs(n,table));if(lines.length>1500)continue;const grid=[];let invalid=false;
   for(let r=0;r<lines.length;r++){grid[r]||=[];let col=0;for(const cell of(lines[r].childNodes||[]).filter(n=>['td','th'].includes(n.tagName))){while(grid[r][col]!==undefined)col++;const attrs=Object.fromEntries((cell.attrs||[]).map(a=>[a.name,a.value])),height=Number(attrs.rowspan||1),width=Number(attrs.colspan||1);if(!Number.isInteger(height)||!Number.isInteger(width)||height<1||height>100||width<1||col+width>60){invalid=true;break}const value=plain(cell);for(let y=r;y<Math.min(lines.length,r+height);y++){grid[y]||=[];for(let x=col;x<col+width;x++){if(grid[y][x]!==undefined){invalid=true;break}grid[y][x]=value}}col+=width}if(invalid)break}if(invalid)continue;
   let mapping,start;for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){const block=grid.slice(r,r+depth);if(block.length!==depth)continue;const count=Math.max(...block.map(row=>row.length)),headers=Array.from({length:count},(_,i)=>normalize(block.map(row=>row[i]||'').join(' '))),full=headers.map((h,i)=>(/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))?i:-1).filter(i=>i>=0),split=['фамилия','имя','отчество'].map(word=>headers.indexOf(word)),names=full.length===1?full:split.every(i=>i>=0)&&new Set(split).size===3?split:[],roles=headers.map((h,i)=>/^(?:занимаемая |наименование )?должност/.test(h)?i:-1).filter(i=>i>=0),subjects=headers.map((h,i)=>!roles.includes(i)&&/преподава/.test(h)&&/предмет|дисциплин/.test(h)?i:-1).filter(i=>i>=0);if(names.length&&roles.length===1&&!names.includes(roles[0])){if(depth<3&&!subjects.length&&headers.some(h=>/преподава/.test(h))&&normalize(grid[r+depth]?.[names[0]])===normalize(grid[r]?.[names[0]]))continue;mapping={names,role:roles[0],subject:subjects.length===1?subjects[0]:null,count};start=r+depth;break}}
+  // Some published teaching-discipline cells literally contain the teaching job.
+  // Use that literal position only after the full normal-header search failed.
+  if(!mapping)for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){
+   const block=grid.slice(r,r+depth);if(block.length!==depth)continue;const count=Math.max(...block.map(row=>row.length)),headers=Array.from({length:count},(_,i)=>normalize(block.map(row=>row[i]||'').join(' ')));
+   const full=headers.map((h,i)=>(/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))?i:-1).filter(i=>i>=0),split=['фамилия','имя','отчество'].map(word=>headers.indexOf(word)),names=full.length===1?full:split.every(i=>i>=0)&&new Set(split).size===3?split:[];
+   const roles=headers.filter(h=>/^(?:занимаемая |наименование )?должност/.test(h)),teaching=headers.map((h,i)=>/^преподава/.test(h)&&/предмет|дисциплин/.test(h)&&!/квалификац|образован|подготовк|специальност|диплом/.test(h)?i:-1).filter(i=>i>=0);
+   if(names.length&&!roles.length&&teaching.length===1&&!names.includes(teaching[0])){mapping={names,role:teaching[0],subject:null,count};start=r+depth;break}
+  }
   if(!mapping)continue;for(const row of grid.slice(start)){if(row.length!==mapping.count)continue;add(mapping.names.map(i=>row[i]||'').join(' ').replace(/\s+/g,' ').trim(),row[mapping.role]||'',mapping.subject===null?'':row[mapping.subject]||'')}
  }
  return records;
