@@ -1,0 +1,17 @@
+const assert=require('assert/strict'),{profileCandidates,mergeStaffRow}=require('../scripts/collect-national-staff.cjs');
+const base='https://school.example/staff/';
+const link=(url,name)=>`<a href="${url}">${name}</a>`;
+const valid='/staff/pedagogicheskiy-sostav-all-2154_36.html';
+assert.equal(profileCandidates(link(valid,'Петрова Анна Ивановна'),base).length,1);
+assert.equal(profileCandidates(link(valid,'Петрова Анна Ивановна')+link(valid,'Яндекс Метрика'),base).length,1,'Footer aliases cannot overwrite an explicit named profile link');
+assert.equal(profileCandidates(link(valid,'Педагогический состав'),base).length,0);
+assert.equal(profileCandidates(link('https://foreign.example'+valid,'Петрова Анна Ивановна'),base).length,0);
+assert.equal(profileCandidates(link('/news/12.html','Петрова Анна Ивановна'),base).length,0);
+const rows=new Map(),held=new Set(),row={name:'Петрова Анна Ивановна',subject:'',subject_evidence:'not_published',source_sha256:'a'};
+mergeStaffRow(rows,held,row);mergeStaffRow(rows,held,{...row,subject:'Алгебра',subject_evidence:'explicit_discipline',source_sha256:'b'});
+assert.equal([...rows.values()][0].source_sha256,'b');
+assert.equal([...rows.values()][0].subject,'Алгебра');
+mergeStaffRow(rows,held,{...row,subject:'Геометрия',subject_evidence:'explicit_discipline',source_sha256:'c'});
+assert.equal(rows.size,0);assert.equal(held.size,1);
+mergeStaffRow(rows,held,row);assert.equal(rows.size,0,'Ambiguous identity cannot re-enter on another page');
+console.log('PASS: only linked same-origin named staff profiles; one page owns subject/provenance; conflicting explicit identities held');
