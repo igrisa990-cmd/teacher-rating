@@ -50,6 +50,23 @@ function extract(html){
    add(plain(names[0]),plain(roles[0]),subject);
   }
  }
+ // Labeled roster cards keep the published position grid separate from the biography.
+ const labeledCard=n=>hasClass(n,'@container')&&hasClass(n,'m-4')&&hasClass(n,'@2xl:flex-row');
+ for(const card of nodes.filter(labeledCard)){
+  const children=n=>(n.childNodes||[]).filter(c=>!!c.tagName),bodies=children(card).filter(n=>hasClass(n,'gap-y-4')&&hasClass(n,'w-full'));
+  if(bodies.length!==1)continue;const body=bodies[0],headers=children(body).filter(n=>hasClass(n,'@sm:mx-auto')&&hasClass(n,'@2xl:mx-0')),grids=children(body).filter(n=>hasClass(n,'grid')&&hasClass(n,'@5xl:grid-cols-3'));
+  if(headers.length!==1||grids.length!==1)continue;
+  const names=children(headers[0]).filter(n=>n.tagName==='h3'&&hasClass(n,'font-medium')&&hasClass(n,'w-fit'));
+  if(names.length!==1||!owned(card,names[0],labeledCard))continue;const roles=[],subjects=[];
+  for(const row of children(grids[0])){
+   if(!hasClass(row,'items-start')||!owned(card,row,labeledCard))continue;
+   const pairs=children(row).filter(n=>hasClass(n,'flex-col')&&hasClass(n,'gap-y-1'));if(pairs.length!==1)continue;
+   const values=children(pairs[0]);if(values.length!==2||values.some(n=>n.tagName!=='span')||!hasClass(values[0],'font-medium'))continue;
+   const label=normalize(plain(values[0]));if(label==='должность')roles.push(plain(values[1]));
+   if(/^(?:преподаваемые )?(?:учебные )?(?:предметы|дисциплины)$/.test(label))subjects.push(plain(values[1]));
+  }
+  if(roles.length===1&&subjects.length<=1){const role=roles[0].replace(/^((?:директор|заместитель директора|зам[.]\s*директора)[^/]{0,100})\s*\/\s*(?=учитель(?:\s|[-(]|$))/iu,'$1, ');add(plain(names[0]),role,subjects[0]||'')}
+ }
  for(const table of nodes.filter(n=>n.tagName==='table')){const lines=nodes.filter(n=>n.tagName==='tr'&&belongs(n,table));if(lines.length>1500)continue;const grid=[];let invalid=false;
   for(let r=0;r<lines.length;r++){grid[r]||=[];let col=0;for(const cell of(lines[r].childNodes||[]).filter(n=>['td','th'].includes(n.tagName))){while(grid[r][col]!==undefined)col++;const attrs=Object.fromEntries((cell.attrs||[]).map(a=>[a.name,a.value])),height=Number(attrs.rowspan||1),width=Number(attrs.colspan||1);if(!Number.isInteger(height)||!Number.isInteger(width)||height<1||height>100||width<1||col+width>60){invalid=true;break}const value=plain(cell);for(let y=r;y<Math.min(lines.length,r+height);y++){grid[y]||=[];for(let x=col;x<col+width;x++){if(grid[y][x]!==undefined){invalid=true;break}grid[y][x]=value}}col+=width}if(invalid)break}if(invalid)continue;
   let mapping,start;for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){const block=grid.slice(r,r+depth);if(block.length!==depth)continue;const count=Math.max(...block.map(row=>row.length)),headers=Array.from({length:count},(_,i)=>normalize(block.map(row=>row[i]||'').join(' '))),full=headers.map((h,i)=>(/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))?i:-1).filter(i=>i>=0),split=['фамилия','имя','отчество'].map(word=>headers.indexOf(word)),names=full.length===1?full:split.every(i=>i>=0)&&new Set(split).size===3?split:[],roles=headers.map((h,i)=>/^(?:занимаемая |наименование )?должност/.test(h)?i:-1).filter(i=>i>=0),subjects=headers.map((h,i)=>!roles.includes(i)&&/преподава/.test(h)&&/предмет|дисциплин/.test(h)?i:-1).filter(i=>i>=0);if(names.length&&roles.length===1&&!names.includes(roles[0])){if(depth<3&&!subjects.length&&headers.some(h=>/преподава/.test(h))&&normalize(grid[r+depth]?.[names[0]])===normalize(grid[r]?.[names[0]]))continue;mapping={names,role:roles[0],subject:subjects.length===1?subjects[0]:null,count};start=r+depth;break}}

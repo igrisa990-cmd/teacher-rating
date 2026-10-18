@@ -1,0 +1,58 @@
+{
+  "preparedAt": "2026-10-18T15:23:40.822Z",
+  "source": "Registry-linked official school rosters with proven source bytes and organization identity",
+  "teachers": 309,
+  "newRows": 309,
+  "newSchoolRosters": 35,
+  "unknownSubjects": 109,
+  "subjectReviewHeld": 0,
+  "duplicateRosterOrganizationsHeld": 0,
+  "unchangedEarlierSourceRecords": 79514,
+  "canonicalSourceRows": 79823,
+  "canonicalSourceSha256": "35000d357747cfc3c48c25222728a31e5ce19495dc09fb7ade48c16f5ac77aa4",
+  "processedSha256": "95c6e90e57953661cedfb665ac40fdbb9265e51849b02fc596f56502fce8e264",
+  "gzipSha256": "acf3b5d64abfaf8a4d7f771fb68ef1344c018aacd02d6a370ec150876b1ce521",
+  "completeInventoryPass": true,
+  "inventoryScope": "Complete selected labeled-template review; only independently proven new teacher identities are emitted.",
+  "checkDatesPreserved": true,
+  "selection": {
+    "selectedAt": "2026-10-18T15:23:35.701Z",
+    "selectedSchools": 51,
+    "reviewInventoryInspected": 2278,
+    "verifiedPagesWithTeacherLabels": 819,
+    "selection": "Remaining current-license empty checkpoints with owned labeled roster grids. Original organization proofs, page checksums and name/position association are revalidated."
+  },
+  "review": {
+    "preparedAt": "2026-10-18T15:23:36.053Z",
+    "inspectedReviewSchools": 51,
+    "identityProofUnavailable": 0,
+    "staffProofUnavailable": 0,
+    "unresolvedFormats": 16,
+    "richerSourceSelections": 0,
+    "inventory": 35,
+    "completed": 35,
+    "teachers": 309,
+    "completeInventoryPass": true,
+    "method": "All selected current-license empty format-review checkpoints are audited. Only sources whose cached UTF-8 bytes match original response checksums and whose organization identity re-validates are emitted. Each person retains a single source row: explicit disciplines outrank teaching-position subjects, which outrank unpublished subjects. Subjects from different pages are never unioned under one source hash. Original checkedAt times and source hashes are retained; this is a cache re-read, not a fresh fetch."
+  },
+  "sourceAudit": {
+    "checkedAt": "2026-10-18T15:23:41.628Z",
+    "verifiedRows": 309,
+    "distinctSourcePages": 39,
+    "regions": 1,
+    "regionCounts": {
+      "Республика Крым": 309
+    },
+    "sourceBytesAndFieldsMatch": true,
+    "method": "Each new teacher name, subject and provenance was independently re-read from its exact URL and SHA256-proven HTML bytes. No multi-page subject unions are accepted."
+  },
+  "publicationStatus": "database_applied",
+  "run": "20261018-staff-labeled-fields",
+  "appliedAt": "2026-10-18T15:28:41.774992Z",
+  "insertedTeachers": 309,
+  "existingIdentitiesLinked": 0,
+  "ambiguousNames": 0,
+  "unmatchedSchools": 0,
+  "stagedPayloadMd5": "0f5d2209bb4fa7bdecf05d7bcc44a727",
+  "completeNationalCoverage": false
+}
