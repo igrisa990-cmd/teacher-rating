@@ -1,0 +1,62 @@
+{
+  "addedTeachers": 2256,
+  "affectedSchools": 169,
+  "regions": 33,
+  "distinctSourcePages": 951,
+  "unpublishedSubjects": 502,
+  "activeSchools": 42199,
+  "activeTeachers": 82115,
+  "totalTeacherRows": 82329,
+  "schoolsWithTeachers": 3539,
+  "orphanTeachers": 0,
+  "duplicateActiveOrganizationOgrns": 0,
+  "importedFieldMismatches": 0,
+  "priorTeacherRowsPreserved": 80073,
+  "priorSourceRowsPreserved": 79823,
+  "canonicalSourceRows": 82079,
+  "canonicalSourceSha256": "d6f07bb8c5ae15e9564dba7e90696033f7bbefdf86267152ed37f577f2afa7d9",
+  "personnelArchivesPublished": false,
+  "apiChecks": [
+    {
+      "label": "empty Moscow browse",
+      "status": 200,
+      "milliseconds": 4469,
+      "count": 21
+    },
+    {
+      "label": "first batch lowercase prefix",
+      "status": 200,
+      "milliseconds": 784,
+      "count": 1
+    },
+    {
+      "label": "second batch lowercase name",
+      "status": 200,
+      "milliseconds": 515,
+      "count": 1
+    }
+  ],
+  "mobile": {
+    "clientWidth": 375,
+    "scrollWidth": 375,
+    "newTeacherFound": true
+  },
+  "runs": [
+    {
+      "run": "20261018-staff-profile-tables",
+      "inserted": 1172,
+      "appliedAt": "2026-10-18T16:37:04.342747Z",
+      "payloadSha256": "165dddb79e15a58f34dadfa6375d17ab41d9ba4ed84e787770f87a1870619772",
+      "stagedMd5": "86be4652fbfa99c1c0b61e5ce022f7b7",
+      "linkedExisting": 0
+    },
+    {
+      "run": "20261018-staff-linked-expansion",
+      "inserted": 1084,
+      "appliedAt": "2026-10-18T16:48:00.128401Z",
+      "payloadSha256": "adff5d13239f7cab65c495fef634102688a30bda5e2827a0b54ae338125c4ef0",
+      "stagedMd5": "f5762b7cd15baa2be5cbd719515aacb1",
+      "linkedExisting": 0
+    }
+  ]
+}
