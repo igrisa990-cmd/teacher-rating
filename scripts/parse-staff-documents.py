@@ -24,6 +24,17 @@ def header_map(rows):
             subjects=[i for i,c in enumerate(cells) if i not in roles and ('преподава' in c and ('предмет' in c or 'дисциплин' in c))]
             if names and len(roles)==1 and roles[0] not in names:
                 return {'name':names,'role':roles[0],'subject':subjects[0] if len(subjects)==1 else None,'columns':count},index+depth
+    # A dedicated joint header owns both the full name and its literal job.
+    # Neither a qualification column nor a neighboring row may supply the job.
+    for index in range(min(15,len(rows))):
+        cells=[normalized(c) for c in rows[index]]
+        joint=[i for i,c in enumerate(cells) if c in ('фио должность','ф и о должность','фамилия имя отчество должность')]
+        other_roles=[i for i,c in enumerate(cells) if re.match(r'^(?:занимаемая |наименование )?должност',c)]
+        if len(joint)!=1 or other_roles:continue
+        if any(i!=joint[0] and (re.search(r'(?:^| )(?:фио|ф и о)(?: |$)',c) or 'фамили' in c and 'имя' in c) for i,c in enumerate(cells)):continue
+        subjects=[i for i,c in enumerate(cells) if i!=joint[0] and 'преподава' in c and ('предмет' in c or 'дисциплин' in c) and not re.search(r'квалификац|образован|диплом|подготовк',c)]
+        if len(subjects)>1:continue
+        return {'name':[joint[0]],'role':joint[0],'subject':subjects[0] if subjects else None,'columns':len(cells),'combined_name_role':True},index+1
     return None,0
 
 def table_people(rows,mapping):
@@ -32,9 +43,14 @@ def table_people(rows,mapping):
         if len(row)!=mapping['columns']: continue
         name=clean(' '.join(str(row[i] or '') for i in mapping['name']))
         role=clean(row[mapping['role']]);subject=clean(row[mapping['subject']]) if mapping['subject'] is not None else ''
+        if mapping.get('combined_name_role'):
+            pair=re.fullmatch(r"([А-ЯЁа-яё][А-ЯЁа-яё’'\-]+(?: [А-ЯЁа-яё][А-ЯЁа-яё’'\-]+){1,3}),\s*(учитель(?:[\s,;(-].*)?)",name,re.I)
+            if not pair:continue
+            name,role=pair.groups()
+            if re.search(r"[А-ЯЁ][а-яё’'\-]+(?:\s+[А-ЯЁ][а-яё’'\-]+){2,}",role):continue
         if not re.fullmatch(r"[А-ЯЁа-яё][А-ЯЁа-яё’'\-]+(?: [А-ЯЁа-яё][А-ЯЁа-яё’'\-]+){1,3}",name): continue
         if re.search(r'фамилия|отчество|учитель|директор|педагог|образование',name,re.I): continue
-        if not re.search(r'(?:^|[,;]\s*)учитель(?:\s|[-(]|$)',role,re.I): continue
+        if not re.search(r'(?:^|[,;]\s*)учитель(?:\s|[-(,;]|$)',role,re.I): continue
         if re.search(r'дефектолог|логопед|воспитател|психолог|декрет|беременн|на лечении|по состоянию здоров',role+' '+subject,re.I): continue
         if len(role)>250 or len(subject)>1000 or re.search(r'@|https?://|\+\d[\d ()-]{7,}',subject): continue
         result.append({'name':name,'role':'Учитель','subject':subject,'subject_evidence':'explicit_document_column' if subject else 'not_published'})
@@ -141,10 +157,10 @@ def process_one(args):
     meta_file,output=args;meta=json.loads(meta_file.read_text(encoding='utf-8'));target=output/meta_file.name
     if target.exists():
         saved=json.loads(target.read_text(encoding='utf-8'))
-        if saved.get('documentParserVersion',0)>=5 or meta['format']!='doc' and (saved.get('documentParserVersion',0)>=4 or saved.get('documentParserVersion',0)>=2 and saved['status']!='table_format_requires_review'):return saved
+        if saved.get('documentParserVersion',0)>=6:return saved
     try: parsed=extract_document(meta)
     except Exception as e: parsed={'status':type(e).__name__+': '+str(e)[:160],'rows':[]}
-    result={**meta,**parsed,'documentParserVersion':5};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
+    result={**meta,**parsed,'documentParserVersion':6};target.write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8');return result
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--root',default='work/staff-documents-20261016');parser.add_argument('--workers',type=int,default=3);args=parser.parse_args()

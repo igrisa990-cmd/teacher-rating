@@ -1,0 +1,13 @@
+const assert=require('assert/strict'),{parsePublicStaff}=require('../scripts/parse-school-staff.cjs');
+const options={schoolOgrn:'1020300977620',sourceUrl:'https://school.example/staff',checkedAt:'2026-10-18T18:00:00Z'},read=html=>parsePublicStaff(html,options).rows;
+const table=(header,name)=>`<table><tr><th>${header}</th><th>Преподаваемые предметы</th><th>Квалификация по диплому</th></tr><tr><td>${name}</td><td>Физика</td><td>Учитель химии</td></tr></table>`;
+let rows=read(table('ФИО, должность','Петрова Анна Ивановна, учитель'));assert.equal(rows.length,1);assert.equal(rows[0].name,'Петрова Анна Ивановна');assert.equal(rows[0].subject,'Физика');
+assert.equal(read(table('ФИО, должность','Петрова Анна Ивановна')).length,0,'Qualification cannot provide the missing job');
+assert.equal(read(table('ФИО, квалификация','Петрова Анна Ивановна, учитель')).length,0);
+assert.equal(read(table('ФИО, должность','Петрова Анна Ивановна, воспитатель')).length,0);
+assert.equal(read(table('ФИО, должность','Петрова Анна Ивановна, учительская')).length,0);
+assert.equal(read(table('ФИО, должность','Петрова Анна Ивановна, учитель, Сидорова Ольга Сергеевна')).length,0,'Two people in one cell are ambiguous');
+assert.equal(read('<table><tr><th>ФИО, должность</th><th>ФИО</th><th>Преподаваемые предметы</th></tr><tr><td>Петрова Анна Ивановна, учитель</td><td>Сидорова Ольга Сергеевна</td><td>Физика</td></tr></table>').length,0);
+rows=read('<table><tr><th>ФИО</th><th>Должность, преподаваемая дисциплина</th></tr><tr><td>Петрова Анна Ивановна</td><td>Учитель, русский язык</td></tr></table>');assert.equal(rows.length,1);assert.equal(rows[0].subject.toLocaleLowerCase('ru'),'русский язык');
+assert.equal(read('<table><tr><th>ФИО</th><th>Квалификация по основной должности</th><th>Преподаваемые предметы</th></tr><tr><td>Петрова Анна Ивановна</td><td>Учитель химии</td><td>Математика</td></tr></table>').length,0);
+console.log('PASS: joint name/position columns and punctuated classroom jobs; no qualification or ambiguous-name-column borrowing');

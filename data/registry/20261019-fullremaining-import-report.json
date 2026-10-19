@@ -1,0 +1,76 @@
+{
+  "checkedAt": "2026-10-19T16:31:47.717Z",
+  "publication": "website_catalog_only",
+  "phase": "first_and_additional_completed",
+  "netNewTeachers": 41785,
+  "firstPhase": {
+    "initiallyInserted": 22982,
+    "contextHolds": 8,
+    "netNew": 22974,
+    "runPrefix": "20261018-staff-fullremaining-",
+    "runs": 12
+  },
+  "additionalPhase": {
+    "netNew": 18811,
+    "runPrefix": "20261019-staff-additional-",
+    "runs": 10,
+    "cohorts": [
+      {
+        "verifiedRows": 57276,
+        "verifiedSchoolIdentities": 2356,
+        "distinctSourcePages": 4988,
+        "sourceBytesAndFieldsMatch": true
+      },
+      {
+        "verifiedRows": 22053,
+        "verifiedSchoolIdentities": 814,
+        "distinctSourcePages": 1940,
+        "sourceBytesAndFieldsMatch": true
+      },
+      {
+        "verifiedRows": 3606,
+        "verifiedSchoolIdentities": 174,
+        "distinctSourcePages": 572,
+        "sourceBytesAndFieldsMatch": true
+      },
+      {
+        "verifiedRows": 138,
+        "verifiedSchoolIdentities": 8,
+        "distinctSourcePages": 9,
+        "sourceBytesAndFieldsMatch": true
+      },
+      {
+        "verifiedRows": 20,
+        "verifiedSchoolIdentities": 3,
+        "sourceBytesAndFieldsMatch": true
+      }
+    ]
+  },
+  "catalog": {
+    "activeSchools": 42199,
+    "activeTeachers": 125421,
+    "schoolsWithTeachers": 5804,
+    "allDatabaseTeacherRows": 125635
+  },
+  "postImportChecks": {
+    "matchedAdditionalRows": 18811,
+    "fieldMismatches": 0,
+    "importedWithRatingOrReviews": 0,
+    "orphanTeachers": 0,
+    "duplicateActiveSchoolOgrns": 0
+  },
+  "canonical": {
+    "rows": 125385,
+    "previousObjectsUnchanged": 106574,
+    "sha256": "6fa54e11a0e965e47486423842ca7f48ac63b47b3b2dd0e7c533721ca45990fb"
+  },
+  "bootstrap": {
+    "migration": "20261019162706_catalog_bootstrap_point_lookups.sql",
+    "publicMoscowRequestBeforeMs": 4988,
+    "publicMoscowRequestAfterMs": 941,
+    "httpStatus": 200,
+    "callerRlsPreserved": true
+  },
+  "nationalPersonnelCoverageComplete": false,
+  "remaining": "A separate1077-site government-platform source queue continues. Unsupported/unavailable/ambiguous/partial/unpublished sources remain review work; processing an input inventory is not a complete national personnel census."
+}
