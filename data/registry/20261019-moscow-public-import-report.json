@@ -1,0 +1,38 @@
+{
+  "checkedAt": "2026-10-19T17:14:10Z",
+  "publication": "website_catalog_only",
+  "netNewTeachers": 18779,
+  "netNewToday": 60564,
+  "region": "Москва",
+  "schools": 176,
+  "sourceInventory": 199,
+  "sourceOutcomes": {
+    "prepared": 176,
+    "outside_school_portal": 22,
+    "public_staff_shape": 1
+  },
+  "unknownSubjects": 18684,
+  "verifiedRows": 18779,
+  "sourceBytesAndFieldsMatch": true,
+  "catalog": {
+    "activeSchools": 42199,
+    "activeTeachers": 144200,
+    "schoolsWithTeachers": 5980,
+    "totalTeacherRows": 144414
+  },
+  "postImportChecks": {
+    "matchedRows": 18779,
+    "fieldMismatches": 0,
+    "importedWithRatingsOrReviews": 0,
+    "orphanTeachers": 0,
+    "duplicateActiveSchoolOgrns": 0
+  },
+  "runPrefix": "20261019-staff-moscow-public-",
+  "runs": 10,
+  "canonical": {
+    "rows": 144164,
+    "previousObjectsUnchanged": 125385,
+    "sha256": "8a54a0a31bfa1cec2f10a53d437e734768f15d0c0ea259172cf4c49919b56de7"
+  },
+  "nationalPersonnelCoverageComplete": false
+}
