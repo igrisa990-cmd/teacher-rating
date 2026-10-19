@@ -1,17 +1,17 @@
 /* A standards-based fallback for explicitly associated microdata fields. */
 const {parse}=require('./staff-parser/node_modules/parse5');
-function extract(html){
+function extract(html,{includeTables=true}={}){
  if(Buffer.byteLength(html)>5000000)throw Error('page_too_large');
  const root=parse(html),nodes=[],stack=[root];while(stack.length){const node=stack.pop();nodes.push(node);if(nodes.length>150000)throw Error('html_node_limit');stack.push(...(node.childNodes||[]).slice().reverse())}
  const prop=node=>(node.attrs?.find(a=>a.name==='itemprop')?.value||'').toLowerCase().split(/\s+/);
  const plain=node=>{const content=node.attrs?.find(a=>a.name==='content')?.value;if(content!==undefined)return content;const values=[],pending=[node];while(pending.length){const n=pending.pop();if(['script','style','template'].includes(n.tagName))continue;if(n.nodeName==='#text')values.push(n.value);else pending.push(...(n.childNodes||[]).slice().reverse())}return values.join(' ').replace(/\s+/g,' ').trim()};
  const cache=new Map();function fields(node){if(cache.has(node))return cache.get(node);const result={fio:[],post:[],discipline:[]},pending=[node];while(pending.length){const n=pending.pop(),p=prop(n);if(p.includes('fio'))result.fio.push(n);if(p.includes('post')||p.includes('position'))result.post.push(n);if(p.includes('teachingdiscipline'))result.discipline.push(n);if(result.fio.length>1)break;pending.push(...(n.childNodes||[]))}cache.set(node,result);return result}
  function associated(node){if(node.tagName==='tr')return true;for(let p=node,depth=0;p&&depth<18;p=p.parentNode,depth++)if(prop(p).includes('teachingstaff'))return true;return false}
- const records=[];for(const fio of nodes.filter(n=>prop(n).includes('fio'))){let node=fio.parentNode;for(let depth=0;node&&depth<18;depth++,node=node.parentNode){const f=fields(node);if(f.fio.length>1)break;if(f.fio.length!==1||f.post.length!==1||f.discipline.length>1||!associated(node))continue;const name=plain(fio),role=plain(f.post[0]),subject=f.discipline.length?plain(f.discipline[0]):'';if(!/^[\p{L}’'-]+(?:\s+[\p{L}’'-]+){1,3}$/u.test(name)||!/(?:^|[,;]\s*)учитель(?:\s|[-(]|$)/i.test(role)||/дефектолог|логопед|воспитател|психолог|декрет|беременн|на лечении|по состоянию здоров/i.test(role+' '+subject)||role.length>250||subject.length>1000||/@|https?:\/\/|\+\d[\d ()-]{7,}/i.test(role+' '+subject))break;records.push({name,role,subject});break}}
+ const records=[];for(const fio of nodes.filter(n=>prop(n).includes('fio'))){let node=fio.parentNode;for(let depth=0;node&&depth<18;depth++,node=node.parentNode){const f=fields(node);if(f.fio.length>1)break;if(f.fio.length!==1||f.post.length!==1||f.discipline.length>1||!associated(node))continue;const name=plain(fio),role=plain(f.post[0]),subject=f.discipline.length?plain(f.discipline[0]):'';if(!/^[\p{L}’'-]+(?:\s+[\p{L}’'-]+){1,3}$/u.test(name)||!/(?:^|[,;]\s*)учитель(?:\s|[-(,;]|$)/i.test(role)||/дефектолог|логопед|воспитател|психолог|декрет|беременн|на лечении|по состоянию здоров/i.test(role+' '+subject)||role.length>250||subject.length>1000||/@|https?:\/\/|\+\d[\d ()-]{7,}/i.test(role+' '+subject))break;records.push({name,role,subject});break}}
  // Read the logical table grid. Explicit row/column spans retain their source association.
  const normalize=value=>String(value||'').normalize('NFKC').toLowerCase().replaceAll('ё','е').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
  function belongs(row,table){for(let p=row.parentNode;p;p=p.parentNode)if(p.tagName==='table')return p===table;return false}
- function add(name,role,subject){if(!/^[\p{L}’'-]+(?:\s+[\p{L}’'-]+){1,3}$/u.test(name)||!/(?:^|[,;]\s*)учитель(?:\s|[-(]|$)/i.test(role)||/дефектолог|логопед|воспитател|психолог|декрет|беременн|на лечении|по состоянию здоров/i.test(role+' '+subject)||role.length>250||subject.length>1000||/@|https?:\/\/|\+\d[\d ()-]{7,}/i.test(role+' '+subject))return;records.push({name,role,subject})}
+ function add(name,role,subject){if(!/^[\p{L}’'-]+(?:\s+[\p{L}’'-]+){1,3}$/u.test(name)||!/(?:^|[,;]\s*)учитель(?:\s|[-(,;]|$)/i.test(role)||/дефектолог|логопед|воспитател|психолог|декрет|беременн|на лечении|по состоянию здоров/i.test(role+' '+subject)||role.length>250||subject.length>1000||/@|https?:\/\/|\+\d[\d ()-]{7,}/i.test(role+' '+subject))return;records.push({name,role,subject})}
  const hasClass=(node,value)=>(node.attrs?.find(a=>a.name==='class')?.value||'').split(/\s+/).includes(value);
  function within(node,value){const out=[],pending=[node];while(pending.length){const current=pending.pop();if(hasClass(current,value))out.push(current);pending.push(...(current.childNodes||[]))}return out}
  // Only explicit fields in the same published staff card are read; biographies and contacts are ignored.
@@ -65,7 +65,7 @@ function extract(html){
    const label=normalize(plain(values[0]));if(label==='должность')roles.push(plain(values[1]));
    if(/^(?:преподаваемые )?(?:учебные )?(?:предметы|дисциплины)$/.test(label))subjects.push(plain(values[1]));
   }
-  if(roles.length===1&&subjects.length<=1){const role=roles[0].replace(/^((?:директор|заместитель директора|зам[.]\s*директора)[^/]{0,100})\s*\/\s*(?=учитель(?:\s|[-(]|$))/iu,'$1, ');add(plain(names[0]),role,subjects[0]||'')}
+  if(roles.length===1&&subjects.length<=1){const role=roles[0].replace(/^((?:директор|заместитель директора|зам[.]\s*директора)[^/]{0,100})\s*\/\s*(?=учитель(?:\s|[-(,;]|$))/iu,'$1, ');add(plain(names[0]),role,subjects[0]||'')}
  }
  // The portal's main profile job precedes its training and career sections.
  // A training "Предмет" or diploma specialization cannot become a taught subject.
@@ -99,7 +99,7 @@ function extract(html){
  }
  // A vertical profile table must own exactly one explicitly labeled person and job.
  // Qualifications, contacts and neighboring tables cannot provide these fields.
- for(const table of nodes.filter(n=>n.tagName==='table')){
+ for(const table of nodes.filter(n=>includeTables&&n.tagName==='table')){
   const nested=nodes.some(n=>n.tagName==='table'&&n!==table&&(()=>{for(let p=n.parentNode;p;p=p.parentNode)if(p===table)return true;return false})());if(nested)continue;
   const fields={names:[],roles:[],subjects:[]};
   for(const row of nodes.filter(n=>n.tagName==='tr'&&belongs(n,table))){
@@ -111,9 +111,16 @@ function extract(html){
   }
   if(fields.names.length===1&&fields.roles.length===1&&fields.subjects.length<=1)add(fields.names[0],fields.roles[0],fields.subjects[0]||'');
  }
- for(const table of nodes.filter(n=>n.tagName==='table')){const lines=nodes.filter(n=>n.tagName==='tr'&&belongs(n,table));if(lines.length>1500)continue;const grid=[];let invalid=false;
+ for(const table of nodes.filter(n=>includeTables&&n.tagName==='table')){const lines=nodes.filter(n=>n.tagName==='tr'&&belongs(n,table));if(lines.length>1500)continue;const grid=[];let invalid=false;
   for(let r=0;r<lines.length;r++){grid[r]||=[];let col=0;for(const cell of(lines[r].childNodes||[]).filter(n=>['td','th'].includes(n.tagName))){while(grid[r][col]!==undefined)col++;const attrs=Object.fromEntries((cell.attrs||[]).map(a=>[a.name,a.value])),height=Number(attrs.rowspan||1),width=Number(attrs.colspan||1);if(!Number.isInteger(height)||!Number.isInteger(width)||height<1||height>100||width<1||col+width>60){invalid=true;break}const value=plain(cell);for(let y=r;y<Math.min(lines.length,r+height);y++){grid[y]||=[];for(let x=col;x<col+width;x++){if(grid[y][x]!==undefined){invalid=true;break}grid[y][x]=value}}col+=width}if(invalid)break}if(invalid)continue;
   let mapping,start;for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){const block=grid.slice(r,r+depth);if(block.length!==depth)continue;const count=Math.max(...block.map(row=>row.length)),headers=Array.from({length:count},(_,i)=>normalize(block.map(row=>row[i]||'').join(' '))),full=headers.map((h,i)=>(/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))?i:-1).filter(i=>i>=0),split=['фамилия','имя','отчество'].map(word=>headers.indexOf(word)),names=full.length===1?full:split.every(i=>i>=0)&&new Set(split).size===3?split:[],roles=headers.map((h,i)=>/^(?:занимаемая |наименование )?должност/.test(h)?i:-1).filter(i=>i>=0),subjects=headers.map((h,i)=>!roles.includes(i)&&/преподава/.test(h)&&/предмет|дисциплин/.test(h)?i:-1).filter(i=>i>=0);if(names.length&&roles.length===1&&!names.includes(roles[0])){if(depth<3&&!subjects.length&&headers.some(h=>/преподава/.test(h))&&normalize(grid[r+depth]?.[names[0]])===normalize(grid[r]?.[names[0]]))continue;mapping={names,role:roles[0],subject:subjects.length===1?subjects[0]:null,count};start=r+depth;break}}
+  // A dedicated joint column may own the full name and a comma-separated job.
+  if(!mapping)for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++){
+   const headers=grid[r].map(normalize),joint=headers.map((h,i)=>/^(?:фио|ф и о|фамилия имя отчество) должность$/.test(h)?i:-1).filter(i=>i>=0);
+   if(joint.length!==1||headers.some((h,i)=>i!==joint[0]&&(/^(?:занимаемая |наименование )?должност/.test(h)||/(?:^| )(?:фио|ф и о)(?: |$)/.test(h)||h.includes('фамили')&&h.includes('имя'))))continue;
+   const subjects=headers.map((h,i)=>i!==joint[0]&&/^преподава/.test(h)&&/предмет|дисциплин/.test(h)&&!/квалификац|образован|диплом|подготовк/.test(h)?i:-1).filter(i=>i>=0);if(subjects.length>1)continue;
+   mapping={names:joint,role:joint[0],subject:subjects.length?subjects[0]:null,count:headers.length,combinedNameRole:true};start=r+1;
+  }
   // Some published teaching-discipline cells literally contain the teaching job.
   // Use that literal position only after the full normal-header search failed.
   if(!mapping)for(let r=0;r<Math.min(15,grid.length)&&!mapping;r++)for(const depth of[1,2,3]){
@@ -122,7 +129,9 @@ function extract(html){
    const roles=headers.filter(h=>/^(?:занимаемая |наименование )?должност/.test(h)),teaching=headers.map((h,i)=>/^преподава/.test(h)&&/предмет|дисциплин/.test(h)&&!/квалификац|образован|подготовк|специальност|диплом/.test(h)?i:-1).filter(i=>i>=0);
    if(names.length&&!roles.length&&teaching.length===1&&!names.includes(teaching[0])){mapping={names,role:teaching[0],subject:null,count};start=r+depth;break}
   }
-  if(!mapping)continue;for(const row of grid.slice(start)){if(row.length!==mapping.count)continue;add(mapping.names.map(i=>row[i]||'').join(' ').replace(/\s+/g,' ').trim(),row[mapping.role]||'',mapping.subject===null?'':row[mapping.subject]||'')}
+  if(!mapping)continue;for(const row of grid.slice(start)){if(row.length!==mapping.count)continue;let name=mapping.names.map(i=>row[i]||'').join(' ').replace(/\s+/g,' ').trim(),role=row[mapping.role]||'';
+   if(mapping.combinedNameRole){const pair=name.match(/^([\p{L}’'-]+(?:\s+[\p{L}’'-]+){1,3}),\s*(учитель(?:[\s,;(-].*)?)$/iu);if(!pair||/[А-ЯЁ][а-яё’'-]+(?:\s+[А-ЯЁ][а-яё’'-]+){2,}/u.test(pair[2]))continue;name=pair[1];role=pair[2]}
+   add(name,role,mapping.subject===null?'':row[mapping.subject]||'')}
  }
  return records;
 }

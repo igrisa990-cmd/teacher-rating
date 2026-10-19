@@ -23,6 +23,14 @@ assert p['current_date_evidence']({'url':'https://school.example/2026.pdf'},'П�
 assert not p['current_date_evidence']({'url':'https://school.example/staff.pdf'},'Фамилия имя отчество Иванова Анна Петровна Повышение квалификации 2026')
 assert p['current_date_evidence']({'url':'https://school.example/staff.pdf'},'Список работников на 2026-2027 учебный год')
 print('PASS: explicit name/role columns, split names, no role borrowing, professional subjects, private-field rejection and academic dates')
+joint=[['ФИО, должность','Преподаваемые учебные предметы','Специальность, квалификация по диплому'],['Петрова Анна Ивановна, учитель','Физика','Учитель химии'],['Сидорова Ольга Петровна','Математика','Учитель'],['Орлова Мария Игоревна, воспитатель','Математика','Учитель']]
+m,i=p['header_map'](joint);found=p['table_people'](joint[i:],m)
+assert len(found)==1 and found[0]['name']=='Петрова Анна Ивановна' and found[0]['subject']=='Физика'
+assert p['header_map']([['ФИО, квалификация','Предмет']])[0] is None
+assert p['header_map']([['ФИО, должность','ФИО','Преподаваемые предметы']])[0] is None
+assert len(p['table_people']([['Петрова Анна Ивановна','Учитель, русский язык','']],{'name':[0],'role':1,'subject':2,'columns':3}))==1
+assert not p['table_people']([['Петрова Анна Ивановна','Учительская','']],{'name':[0],'role':1,'subject':2,'columns':3})
+print('PASS: owned joint name/position cells and teaching-role punctuation; no qualification, neighboring-row or ambiguous-header borrowing')
 import tempfile,hashlib
 from pathlib import Path
 with tempfile.TemporaryDirectory(dir=Path('work').resolve()) as folder:

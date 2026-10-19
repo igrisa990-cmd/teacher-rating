@@ -7,3 +7,7 @@ data/registry/*national-staff*.ndjson.gz
 data/registry/*staff-changes*.ndjson.gz
 data/registry/*licensed-schools*.ndjson.gz
 data/registry/*license-changes*.ndjson.gz
+
+# Python readers create bytecode caches during local verification.
+__pycache__/
+*.py[cod]

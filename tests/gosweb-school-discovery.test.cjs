@@ -1,0 +1,11 @@
+const assert=require('assert/strict'),{matchLicensedSchool}=require('../scripts/discover-gosweb-schools.cjs'),{normalize}=require('../scripts/collect-national-staff.cjs');
+const ogrn='1020300977620',name='Муниципальное бюджетное общеобразовательное учреждение Средняя общеобразовательная школа номер 3',licenses=new Map([[ogrn,{ogrn,name}]]),names=new Map([[ogrn,new Set([normalize(name)])]]),page=(id=ogrn,title=name)=>`<p>ОГРН) : ${id}</p><h3 itemprop="fullName">${title}</h3>`;
+assert.equal(matchLicensedSchool(page(),licenses,names).ogrn,ogrn);assert.equal(matchLicensedSchool(page(ogrn,'Другая школа'),licenses,names),null);assert.equal(matchLicensedSchool(page('1027700132195'),licenses,names),null);
+assert.equal(matchLicensedSchool('<script>ОГРН '+ogrn+'</script><h3 itemprop="fullName">'+name+'</h3>',licenses,names),null);assert.equal(matchLicensedSchool(page()+`<h3 itemprop="fullName">Другая школа</h3>`,licenses,names),null);
+assert.equal(matchLicensedSchool('<p>ОГРН '+ogrn+' '+name+'</p>',licenses,names),null,'An arbitrary mention is not an owned legal name');
+const second='1027700132195';licenses.set(second,{ogrn:second,name});assert.equal(matchLicensedSchool(page()+'<p>ОГРН '+second+'</p>',licenses,names),null,'Multiple active organizations on a page remain ambiguous');
+const paragraph=value=>`<div class="tpl-component-gw-base-text"><article class="tpl-text-default"><p><strong>Полное наименование:</strong> ${value}</p><p><strong>Сокращенное наименование:</strong> МБОУ</p></article></div>`;
+assert.equal(matchLicensedSchool('<p>ОГРН '+ogrn+'</p>'+paragraph(name),licenses,names).ogrn,ogrn);
+assert.equal(matchLicensedSchool('<p>ОГРН '+ogrn+'</p><p><strong>Полное наименование:</strong> '+name+'</p>',licenses,names),null,'An arbitrary paragraph outside the dedicated official-data component remains unproven');
+assert.equal(matchLicensedSchool('<p>ОГРН '+ogrn+'</p>'+paragraph(name+' <strong>Другие сведения:</strong> текст'),licenses,names),null,'Multiple labeled fields cannot become one legal name');
+console.log('PASS: discovered government hosts require one exact licensed OGRN and matching owned full legal name; mentions, scripts, wrong names and ambiguous organizations held');
