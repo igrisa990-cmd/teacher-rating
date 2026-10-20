@@ -22,6 +22,30 @@ function parseCampuses(html){
    if(address(value)){const postal=value.search(/(?:^|\D)\d{6}(?=\D|$)/);if(postal>3&&label(value.slice(0,postal).trim()))add(value.slice(postal).trim(),value.slice(0,postal).trim());else add(value,current)}
   }
  }
+ // Gosweb/Netcat also publishes a dedicated main-program block without microdata.
+ // Require its owned section anchor and explicit main-program heading; never read legal/contact blocks.
+ const hasClass=(n,value)=>(n.attrs?.find(a=>a.name==='class')?.value||'').split(/\s+/).includes(value);
+ const descendants=(parent,test)=>{const out=[],pending=[...(parent.childNodes||[])].reverse();while(pending.length){const n=pending.pop();if(test(n))out.push(n);pending.push(...(n.childNodes||[]).slice().reverse())}return out};
+ const components=new Set();
+ for(const anchor of nodes.filter(n=>n.attrs?.some(a=>a.name==='id'&&a.value==='mesta-osuschestvleniya-obrazovatelnoy-deyatelnosti'))){for(let p=anchor.parentNode;p;p=p.parentNode)if(hasClass(p,'tpl-component-gw-base-text')){components.add(p);break}}
+ function lines(node){const out=[],pending=[node];while(pending.length){const n=pending.pop();if(['script','style','template'].includes(n.tagName))continue;if(n.tagName==='br')out.push('\n');else if(n.nodeName==='#text')out.push(n.value);else pending.push(...(n.childNodes||[]).slice().reverse())}return out.join('').split(/\n+/).map(s=>s.replace(/\s+/g,' ').replace(/^\s*[-–—•]\s*/u,'').trim()).filter(Boolean)}
+ function mainAddress(value){
+  if(/квартир|(?:^|[\s,;])кв[.]?\s*\d/iu.test(value))return;
+  const houses=value.match(/^(.*(?<!\p{L})(?:дом|д[.])\s*)(\d{1,5}[а-яёa-z]?)\s+и\s+(\d{1,5}[а-яёa-z]?)$/iu);
+  if(houses){add(houses[1]+houses[2]);add(houses[1]+houses[3]);return}
+  add(value);
+ }
+ for(const component of components)for(const article of descendants(component,n=>n.tagName==='article'&&hasClass(n,'tpl-text-default'))){let main=false;
+  for(const paragraph of descendants(article,n=>n.tagName==='p')){for(let value of lines(paragraph)){
+   const heading=value.match(/^По основным программам\s*:\s*(.*)$/iu);
+   if(heading){main=true;value=heading[1];if(!value)continue}
+   else if(/^(?:По\s|Места обучения|Проведение\s|Данные выписки|Юридический адрес|Контакт)/iu.test(value)||/^(?:Места|Адреса)\s.*(?:сетев|практик|дистанцион|электронн)/iu.test(value)){main=false;continue}
+   if(!main)continue;
+   const strong=descendants(paragraph,n=>['strong','b'].includes(n.tagName)).length>0;
+   if(!address(value)&&strong){main=false;continue}
+   mainAddress(value);
+  }}
+ }
  return result;
 }
 module.exports={parseCampuses,normalizeAddress};
