@@ -8,6 +8,7 @@ function explicitPhysicalSettlement(address,region){
   if(/сельское поселение|с[.]\s*п[.]|сельский округ|городское поселение|г[.]\s*о[.]|муниципальн\p{L}* округ|городской округ|муниципальное образование/iu.test(part))continue;
   const afterAdmin=part.match(/^(.+?(?:область|республика|край|район|округ))\s+(.+)$/iu);
   if(afterAdmin&&!/(?:улица|шоссе|переулок|\bhttps?\b)/iu.test(afterAdmin[1]))part=afterAdmin[2];
+  if(/^д\s*[.]\s*\d+(?:[/.-]\d+)*-?[а-яa-z]$/iu.test(part))continue;
   const start=part.match(new RegExp('^(?:'+marker+'[.]?\\s+|'+short+'\\s*[.]?\\s+|'+short+'\\s*[.]\\s*|н\\s*[.]\\s*п\\s*[.]\\s*|р\\s*[.]\\s*п\\s*[.]{1,2}\\s*|п[.]?\\s*/\\s*ст[.]?\\s+)(.+)$','iu'));
   if(!start)continue;
   const name=start[1].split(/\s+(?:улица|ул\s*[.]|проспект|просп\s*[.]|проезд|переулок|пер\s*[.]|шоссе|дом|д\s*[.]|здание|зд\s*[.]|квартал|кв-л|микрорайон|мкр\s*[.])\s*/iu)[0].trim().replace(/^(?:«(.+)»|"(.+)")$/u,(_match,a,b)=>a||b);

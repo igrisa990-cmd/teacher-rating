@@ -15,6 +15,8 @@
     "test:staff-platform-circuit": "node tests/staff-platform-circuit.test.cjs",
     "test:staff-gzip-proof": "node tests/staff-gzip-proof.test.cjs",
     "test:catalog-bootstrap-sql": "node tests/catalog-bootstrap-sql.cjs",
-    "test:mskobr-collector": "node tests/mskobr-public-collector.test.cjs"
+    "test:mskobr-collector": "node tests/mskobr-public-collector.test.cjs",
+    "test:school-discovery-circuit": "node tests/gosweb-discovery-circuit.test.cjs",
+    "test:staff-redirect-robots": "node tests/staff-redirect-robots.test.cjs"
   }
 }
