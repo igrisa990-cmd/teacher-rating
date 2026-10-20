@@ -1,0 +1,13 @@
+const assert=require('assert/strict'),{parseCampuses}=require('../scripts/parse-school-campuses.cjs');
+const block=body=>'<div class="tpl-component-gw-base-text"><div class="tpl-anchor" id="mesta-osuschestvleniya-obrazovatelnoy-deyatelnosti"></div><article class="tpl-text-default">'+body+'</article></div>';
+const first='640001, Примерная область, Тестовый район, п. ж/д ст. Станционный, ул. Первая, 2В',second='640002, Примерная область, Тестовый район, поселок Сосновый, улица Школьная, дом ',third='640003, Примерная область, Тестовый район, с. Берёзовое, улица Береговая, 10';
+let rows=parseCampuses('<p>Юридический адрес: г. Москва, ул. Примерная, д. 1, кв. 41</p>'+block('<p><strong>По основным программам:</strong></p><p>- '+first+'</p><p>- '+second+'12 и 14</p><p>- '+third+'</p><p><strong>По программам дошкольного образования:</strong></p><p>г. Другой, ул. Детсадовская, дом 8</p><p>Места обучения при использовании сетевой формы реализации:</p><p>г. Другой, ул. Партнерская, дом 9</p><p>Проведение практики:</p><p>г. Другой, ул. Практическая, дом 10</p>'));
+assert.deepEqual(rows.map(r=>r.address),[first,second+'12',second+'14',third]);assert(rows.every(r=>r.kind==='education_place'&&r.name==='Учебная площадка'),'No invented building name or branch type');
+assert.equal(parseCampuses('<article class="tpl-text-default"><p>По основным программам:</p><p>'+first+'</p></article>').length,0,'A matching caption outside the owned educational-place section is insufficient');
+assert.equal(parseCampuses(block('<p>Юридический адрес:</p><p>'+first+'</p>')).length,0,'A legal address alone is not a teaching location');
+assert.equal(parseCampuses(block('<p>По основным программам:</p><p>г. Москва, ул. Примерная, д. 1, кв. 41</p>')).length,0,'Apartment addresses are held for review');
+rows=parseCampuses(block('<p><strong>По основным программам:</strong><br>'+first+'<br>'+first+'</p><p><strong>По дополнительным программам:</strong></p><p>'+third+'</p>'));
+assert.deepEqual(rows.map(r=>r.address),[first],'Line breaks retain address boundaries and duplicate locations are collapsed');
+rows=parseCampuses(block('<p>По основным программам:</p><p>'+first+'</p><p>Места осуществления образовательной деятельности при использовании сетевой формы:</p><p>'+third+'</p>'));
+assert.deepEqual(rows.map(r=>r.address),[first],'An alternate unstyled network-program caption also terminates main-program scope');
+console.log('PASS: owned main-program places, separate explicit house numbers, no legal/preschool/network/practice/apartment promotion');
