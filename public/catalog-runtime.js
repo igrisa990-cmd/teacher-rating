@@ -7,7 +7,60 @@ function catalogCache(table,rows){const cache=new Map(state[table].map(r=>[r.id,
 async function catalogEnsureSchools(ids){const missing=[...new Set(ids.filter(Boolean).map(id=>String(id).toLowerCase()))].filter(id=>!state.schools.some(s=>s.id===id)&&!catalogMissingSchools.has(id));for(let i=0;i<missing.length;i+=80){const batch=missing.slice(i,i+80).filter(id=>/^[a-f0-9-]{36}$/.test(id));if(!batch.length)continue;const r=await state.db.from('schools').select('*').in('id',batch);if(r.error)throw r.error;catalogCache('schools',r.data||[]);for(const id of batch)if(!r.data?.some(s=>s.id===id))catalogMissingSchools.add(id)}}
 async function catalogEnsureTeachers(ids){ids=ids.filter(Boolean).map(id=>String(id).toLowerCase());const missing=[...new Set(ids.filter(Boolean).map(id=>String(id).toLowerCase()))].filter(id=>!state.teachers.some(t=>t.id===id)&&!catalogMissingTeachers.has(id));for(let i=0;i<missing.length;i+=80){const batch=missing.slice(i,i+80).filter(id=>/^[a-f0-9-]{36}$/.test(id));if(!batch.length)continue;const r=await state.db.from('teachers').select('*').in('id',batch);if(r.error)throw r.error;catalogCache('teachers',r.data||[]);for(const id of batch)if(!r.data?.some(t=>t.id===id))catalogMissingTeachers.add(id)}await catalogEnsureSchools(state.teachers.filter(t=>ids.includes(t.id)).map(t=>t.school_id))}
 function catalogApplyBootstrap(data){catalogCache('schools',data.schools||[]);catalogCache('teachers',data.teachers||[]);state.catalogStats=data.stats||null}
-loadData=async function(){state.loading=true;state.demoMode=false;render();try{const cfg=window.RUNTIME_CONFIG||{};if(!window.supabase||!cfg.supabaseUrl||!cfg.supabaseAnonKey)throw Error('База не настроена');if(!state.db)state.db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});accountBindAuth();const revision=state.authRevision||0;const session=await state.db.auth.getSession();if(session.error)throw session.error;if(revision===(state.authRevision||0))state.user=realAccount(session.data.session?.user);if(state.user)await accountHydrateUser();const [bootstrap,reviews,votes]=await Promise.all([state.db.rpc('catalog_bootstrap',{p_region:preferredRegion()||''}),state.db.from('reviews').select('*').order('created_at',{ascending:false}).limit(300),state.db.from('review_votes').select('review_id,user_id,is_helpful').limit(1000)]);if(bootstrap.error)throw bootstrap.error;catalogApplyBootstrap(bootstrap.data);state.reviews=reviews.data||[];state.votes=votes.data||[];state.requests=[];state.verificationChecks=[];state.catalogError=null;if(state.user)await catalogEnsureTeachers([...state.favorites])}catch(e){state.catalogError='Не удалось загрузить справочник. Проверьте подключение и повторите.';console.error('Catalog load failed',e?.code||'network');toast(state.catalogError)}finally{state.loading=false;account();render();if(!state.catalogError)setTimeout(accountMaybeRegionOnboarding,0)}};
+let catalogLoadVersion=0;
+function catalogStartupTask(run,timeout){
+ const controller=new AbortController();
+ let timer;
+ const deadline=new Promise(resolve=>{timer=setTimeout(()=>{
+  controller.abort();
+  resolve({data:null,error:{code:'startup_timeout'}});
+ },timeout)});
+ const request=Promise.resolve().then(()=>run(controller.signal));
+ return Promise.race([request,deadline]).finally(()=>clearTimeout(timer));
+}
+loadData=async function(){
+ const version=++catalogLoadVersion;
+ state.loading=true;state.demoMode=false;render();
+ let region;
+ try{
+  const cfg=window.RUNTIME_CONFIG||{};
+  if(!window.supabase||!cfg.supabaseUrl||!cfg.supabaseAnonKey)throw Error('База не настроена');
+  if(!state.db)state.db=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  accountBindAuth();
+  const revision=state.authRevision||0;
+  region=preferredRegion()||'';
+  const optional=run=>catalogStartupTask(run,12000).catch(()=>null);
+  const [bootstrap,reviews,votes,session]=await Promise.all([
+   catalogStartupTask(signal=>state.db.rpc('catalog_bootstrap',{p_region:region}).abortSignal(signal),18000),
+   optional(signal=>state.db.from('reviews').select('*').order('created_at',{ascending:false}).limit(300).abortSignal(signal)),
+   optional(signal=>state.db.from('review_votes').select('review_id,user_id,is_helpful').limit(1000).abortSignal(signal)),
+   optional(()=>state.db.auth.getSession())
+  ]);
+  if(version!==catalogLoadVersion)return;
+  if(bootstrap.error)throw bootstrap.error;
+  catalogApplyBootstrap(bootstrap.data);
+  if(reviews?.data)state.reviews=reviews.data;
+  if(votes?.data)state.votes=votes.data;
+  if(session?.data&&revision===(state.authRevision||0))state.user=realAccount(session.data.session?.user);
+  state.requests=[];state.verificationChecks=[];state.catalogError=null;
+  if(state.user)void accountHydrateUser().then(()=>{
+   if(version===catalogLoadVersion&&['profile','settings'].includes(currentRouteName()))render();
+  }).catch(()=>{});
+ }catch(e){
+  if(version!==catalogLoadVersion)return;
+  state.catalogError='Не удалось загрузить справочник. Проверьте подключение и повторите.';
+  console.error('Catalog load failed',e?.code||'network');
+  toast(state.catalogError);
+ }finally{
+  if(version===catalogLoadVersion){
+   state.loading=false;account();render();
+   if(!state.catalogError){
+    if(region!==(preferredRegion()||''))void catalogRefreshRegion();
+    setTimeout(accountMaybeRegionOnboarding,0);
+   }
+  }
+ }
+};
 const catalogProfileBefore={teacher:openTeacher,school:openSchool};
 async function catalogOpenProfile(kind,rawId){
  const id=String(rawId).toLowerCase(),target=kind+'/'+id,current=currentRouteName(),from=current.startsWith(kind+'/')?(history.state?.from||kind+'-catalog'):current;
